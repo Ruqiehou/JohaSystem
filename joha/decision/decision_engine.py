@@ -145,7 +145,7 @@ class DecisionEngine:
         command = tool_action.get("command", "")
 
         if action_type == "slash" and command:
-            from joha.core.utils import get_tool_registry
+            from joha.core import get_tool_registry
             if query:
                 return get_tool_registry().dispatch(command, query)
             return None

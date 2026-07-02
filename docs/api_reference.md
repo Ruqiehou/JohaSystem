@@ -54,7 +54,7 @@ api = bot.api
 
 ## 3. GroupMessageEvent
 
-路径: `adapter.kernel.events.GroupMessageEvent`
+路径: `adapter.protocol.events.GroupMessageEvent`
 
 群消息事件模型。
 
