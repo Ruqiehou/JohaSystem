@@ -9,10 +9,10 @@ import asyncio
 import logging
 from typing import Any, Awaitable, Callable, Dict, List, Optional, TypeAlias
 
-from adapter.config import setup_logging
-from adapter.transport import NapCatClient
-from adapter.protocol import BotAPI
-from adapter.protocol.events import (
+from joha.adapter.config import setup_logging
+from joha.adapter.transport import NapCatClient
+from joha.adapter.protocol import BotAPI
+from joha.adapter.protocol.events import (
     GroupMessageEvent,
     NoticeEvent,
     PrivateMessageEvent,
@@ -224,7 +224,7 @@ class MessageClient:
     @classmethod
     def run(cls) -> None:
         """一键启动：从 connection.yaml 读取配置并运行消息客户端"""
-        from adapter.config import config_manager
+        from joha.adapter.config import config_manager
 
         client = cls(
             ws_url=config_manager.get("napcat.ws_url", "ws://127.0.0.1:3002"),

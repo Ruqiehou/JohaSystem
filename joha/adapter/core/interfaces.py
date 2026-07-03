@@ -1,13 +1,13 @@
-"""adapter.core.interfaces → transport + protocol 接口兼容重导出"""
+"""joha.adapter.core.interfaces → transport + protocol 接口兼容重导出"""
 
-from adapter.transport.interfaces import (
+from joha.adapter.transport.interfaces import (
     APIResponse,
     EventHandler,
     IClient,
     IConnectionEventListener,
     MessageSegmentType,
 )
-from adapter.protocol.interfaces import (
+from joha.adapter.protocol.interfaces import (
     IBotAPI,
     IEventDispatcher,
 )

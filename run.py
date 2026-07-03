@@ -2,7 +2,7 @@
 Joha 统一启动入口
 """
 
-from adapter import MessageClient, GroupMessageEvent, config_manager
+from joha.adapter import MessageClient, GroupMessageEvent, config_manager
 from joha.core import message_handler, runtime_context
 from joha.core.hot_reload import hot_reloader
 

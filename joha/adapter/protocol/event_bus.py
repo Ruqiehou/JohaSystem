@@ -9,7 +9,7 @@ import asyncio
 import logging
 from typing import Any, Awaitable, Callable, Dict, List, Type, TypeVar
 
-from adapter.protocol.events import BaseEvent
+from joha.adapter.protocol.events import BaseEvent
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +39,6 @@ class EventBus:
         if not handlers:
             return
 
-        # 批量创建任务，统一 gather 减少调度开销
         tasks = [
             asyncio.create_task(self._run_handler(handler, event))
             for handler in handlers
@@ -51,7 +50,6 @@ class EventBus:
                     logger.error(f"EventBus handler error [{type(event).__name__}]: {r}")
 
     async def _run_handler(self, handler: Handler, event: BaseEvent) -> None:
-        """运行处理器并捕获异常"""
         try:
             await handler(event)
         except Exception as e:

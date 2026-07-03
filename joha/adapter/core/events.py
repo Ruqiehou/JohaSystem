@@ -1,6 +1,6 @@
-"""adapter.core.events → adapter.protocol.events 兼容重导出"""
+"""joha.adapter.core.events → joha.adapter.protocol.events 兼容重导出"""
 
-from adapter.protocol.events import (
+from joha.adapter.protocol.events import (
     BaseEvent,
     FriendRecallNotice,
     FriendRequestEvent,

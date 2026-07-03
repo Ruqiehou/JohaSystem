@@ -8,9 +8,9 @@ from __future__ import annotations
 import logging
 from typing import Any, Dict, List, Optional, TypeAlias
 
-from adapter.transport.client import NapCatClient
-from adapter.transport.interfaces import MessageSegmentType
-from adapter.protocol.message_segment import MessageSegment
+from joha.adapter.transport.client import NapCatClient
+from joha.adapter.transport.interfaces import MessageSegmentType
+from joha.adapter.protocol.message_segment import MessageSegment
 
 logger = logging.getLogger(__name__)
 

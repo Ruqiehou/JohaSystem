@@ -9,7 +9,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Self
 
-from .emoji_map import get_face_name
+from joha.adapter.protocol.emoji_map import get_face_name
 
 logger = logging.getLogger(__name__)
 
@@ -25,12 +25,12 @@ class Message:
     plain_text: str = ""
     raw_message: str = ""
     segments: List[MessageSegment] = field(default_factory=list)
-    face_ids: List[int] = field(default_factory=list)        # 表情 ID 列表
-    face_names: List[str] = field(default_factory=list)      # 表情名称列表
-    has_dice: bool = False                                    # 是否含骰子
-    has_rps: bool = False                                     # 是否含猜拳
-    has_poke: bool = False                                    # 是否含戳一戳
-    has_sticker: bool = False                                 # 是否含收藏表情包
+    face_ids: List[int] = field(default_factory=list)
+    face_names: List[str] = field(default_factory=list)
+    has_dice: bool = False
+    has_rps: bool = False
+    has_poke: bool = False
+    has_sticker: bool = False
 
     @classmethod
     def from_raw(cls, value: Any, raw_message: str = "") -> Self:
@@ -91,7 +91,6 @@ class Message:
         return cls(plain_text=text, raw_message=raw_message or text)
 
     def get_plain_text(self) -> str:
-        """获取纯文本消息"""
         return self.plain_text or self.raw_message
 
 
@@ -104,14 +103,6 @@ class BaseEvent:
 
     @classmethod
     def from_dict(cls, data: EventData) -> Self:
-        """从字典创建事件实例
-
-        Args:
-            data: 事件原始数据字典
-
-        Returns:
-            事件实例
-        """
         return cls(**{k: v for k, v in data.items() if k in cls.__dataclass_fields__})
 
 
@@ -128,26 +119,17 @@ class GroupMessageEvent(BaseEvent):
     raw_message: str = ""
     font: int = 0
     sender: SenderInfo = field(default_factory=dict)
-    at_user_ids: list = field(default_factory=list)          # @ 的用户 ID 列表
-    reply_message_id: Optional[int] = None                    # 回复的消息 ID
+    at_user_ids: list = field(default_factory=list)
+    reply_message_id: Optional[int] = None
 
     @classmethod
     def from_dict(cls, data: EventData) -> Self:
-        """从字典创建群消息事件实例
-
-        Args:
-            data: 事件原始数据字典
-
-        Returns:
-            GroupMessageEvent 实例
-        """
         raw_message: str = str(data.get("raw_message", ""))
         msg = Message.from_raw(data.get("message", raw_message), raw_message)
 
         snd: SenderInfo = data.get("sender", {})
         uname: str = str(snd.get("nickname", "") or snd.get("card", ""))
 
-        # 从消息段中提取 @ 和 reply 信息
         at_user_ids: list = []
         reply_message_id: Optional[int] = None
         for seg in msg.segments:
@@ -199,14 +181,6 @@ class PrivateMessageEvent(BaseEvent):
 
     @classmethod
     def from_dict(cls, data: EventData) -> Self:
-        """从字典创建私聊消息事件实例
-
-        Args:
-            data: 事件原始数据字典
-
-        Returns:
-            PrivateMessageEvent 实例
-        """
         raw_message: str = str(data.get("raw_message", ""))
         msg = Message.from_raw(data.get("message", raw_message), raw_message)
 
@@ -270,7 +244,6 @@ class NoticeEvent(BaseEvent):
 
 @dataclass
 class GroupIncreaseNotice(NoticeEvent):
-    """群成员增加"""
     sub_type: str = ""
     operator_id: int = 0
 
@@ -290,7 +263,6 @@ class GroupIncreaseNotice(NoticeEvent):
 
 @dataclass
 class GroupDecreaseNotice(NoticeEvent):
-    """群成员减少"""
     sub_type: str = ""
     operator_id: int = 0
 
@@ -310,7 +282,6 @@ class GroupDecreaseNotice(NoticeEvent):
 
 @dataclass
 class GroupBanNotice(NoticeEvent):
-    """群禁言"""
     sub_type: str = ""
     operator_id: int = 0
     duration: int = 0
@@ -332,7 +303,6 @@ class GroupBanNotice(NoticeEvent):
 
 @dataclass
 class GroupRecallNotice(NoticeEvent):
-    """群消息撤回"""
     operator_id: int = 0
     message_id: int = 0
 
@@ -352,7 +322,6 @@ class GroupRecallNotice(NoticeEvent):
 
 @dataclass
 class FriendRecallNotice(NoticeEvent):
-    """好友消息撤回"""
     message_id: int = 0
 
     @classmethod
@@ -369,7 +338,6 @@ class FriendRecallNotice(NoticeEvent):
 
 @dataclass
 class PokeNotice(NoticeEvent):
-    """戳一戳通知"""
     target_id: int = 0
 
     @classmethod
@@ -387,7 +355,6 @@ class PokeNotice(NoticeEvent):
 
 @dataclass
 class RequestEvent(BaseEvent):
-    """请求事件基类（好友申请、群邀请等）"""
     request_type: str = ""
     user_id: int = 0
     comment: str = ""
@@ -418,8 +385,6 @@ class RequestEvent(BaseEvent):
 
 @dataclass
 class FriendRequestEvent(RequestEvent):
-    """好友申请"""
-
     @classmethod
     def _build(cls, data: EventData) -> Self:
         return cls(
@@ -435,7 +400,6 @@ class FriendRequestEvent(RequestEvent):
 
 @dataclass
 class GroupRequestEvent(RequestEvent):
-    """群邀请 / 加群申请"""
     group_id: int = 0
     sub_type: str = ""
 

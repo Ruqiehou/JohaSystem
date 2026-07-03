@@ -11,7 +11,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Callable, Dict, List, Optional, TypedDict, Union
 
-from adapter.protocol.interfaces import IEventDispatcher
+from joha.adapter.protocol.interfaces import IEventDispatcher
 
 logger = logging.getLogger(__name__)
 
@@ -84,14 +84,6 @@ class EventDispatcher(IEventDispatcher):
         priority: int = 0,
         name: Optional[str] = None,
     ) -> None:
-        """注册事件处理器
-
-        Args:
-            event_type: 事件类型（'group' / 'private' / 'notice' / 'request'）
-            handler: 处理器函数（同步 / 异步均可）
-            priority: 优先级，数值越大越高
-            name: 处理器名称（调试用）
-        """
         if event_type not in self._handlers:
             logger.warning(f"未知事件类型: {event_type}")
             return
@@ -113,15 +105,6 @@ class EventDispatcher(IEventDispatcher):
         logger.debug(f"注册事件处理器: {event_type}.{resolved_name} (priority={priority})")
 
     def unregister_handler(self, event_type: str, handler: Callable[..., Any]) -> bool:
-        """注销事件处理器
-
-        Args:
-            event_type: 事件类型
-            handler: 处理器函数
-
-        Returns:
-            是否成功注销
-        """
         if event_type not in self._handlers:
             return False
 
@@ -135,27 +118,12 @@ class EventDispatcher(IEventDispatcher):
     # ==================== 过滤器 ====================
 
     def add_filter(self, event_type: str, filter_func: FilterFunc) -> None:
-        """添加事件过滤器
-
-        Args:
-            event_type: 事件类型
-            filter_func: 过滤函数，返回 True 表示处理，False 表示跳过
-        """
         if event_type not in self._filters:
             self._filters[event_type] = []
         self._filters[event_type].append(filter_func)
         logger.debug(f"添加事件过滤器: {event_type}")
 
     def remove_filter(self, event_type: str, filter_func: FilterFunc) -> bool:
-        """移除事件过滤器
-
-        Args:
-            event_type: 事件类型
-            filter_func: 过滤函数
-
-        Returns:
-            是否成功
-        """
         if event_type not in self._filters:
             return False
         if filter_func in self._filters[event_type]:
@@ -166,19 +134,9 @@ class EventDispatcher(IEventDispatcher):
     # ==================== 分发 ====================
 
     async def dispatch(self, event_type: str, data: Dict[str, Any]) -> None:
-        """分发事件
-
-        Args:
-            event_type: 事件类型
-            data: 事件数据
-
-        Raises:
-            ValueError: 未知事件类型
-        """
         if event_type not in self._handlers:
             raise ValueError(f"未知事件类型: {event_type}")
 
-        # 检查过滤器
         if event_type in self._filters:
             for f in self._filters[event_type]:
                 try:
@@ -195,7 +153,6 @@ class EventDispatcher(IEventDispatcher):
         self._stats["total_dispatched"] += 1
         start_time: float = time.perf_counter()
 
-        # 并发执行所有处理器
         tasks = [self._execute_handler(h, data, event_type) for h in handlers]
 
         if tasks:
@@ -217,16 +174,6 @@ class EventDispatcher(IEventDispatcher):
         data: Dict[str, Any],
         event_type: str,
     ) -> Any:
-        """执行单个处理器
-
-        Args:
-            handler_info: 处理器信息
-            data: 事件数据
-            event_type: 事件类型
-
-        Returns:
-            处理器返回值
-        """
         handler: Callable[..., Any] = handler_info["handler"]
         name: str = handler_info["name"]
         is_async: bool = handler_info["is_async"]
@@ -254,24 +201,11 @@ class EventDispatcher(IEventDispatcher):
     # ==================== 查询 / 统计 ====================
 
     def get_handler_count(self, event_type: Optional[str] = None) -> int:
-        """获取处理器数量
-
-        Args:
-            event_type: 事件类型，None 表示所有类型
-
-        Returns:
-            处理器数量
-        """
         if event_type is None:
             return sum(len(h) for h in self._handlers.values())
         return len(self._handlers.get(event_type, []))
 
     def get_stats(self) -> StatsSnapshot:
-        """获取分发器统计信息
-
-        Returns:
-            统计信息快照
-        """
         snap: StatsSnapshot = {
             "total_dispatched": self._stats["total_dispatched"],
             "total_processing_time": self._stats["total_processing_time"],
@@ -285,7 +219,6 @@ class EventDispatcher(IEventDispatcher):
         return snap
 
     def reset_stats(self) -> None:
-        """重置统计信息"""
         self._stats = {
             "total_dispatched": 0,
             "total_processing_time": 0.0,
@@ -294,7 +227,6 @@ class EventDispatcher(IEventDispatcher):
         }
 
     def close(self) -> None:
-        """关闭分发器，释放资源"""
         self._executor.shutdown(wait=False)
         logger.info("事件分发器已关闭")
 
@@ -317,27 +249,13 @@ class PriorityEventDispatcher(EventDispatcher):
     ) -> None:
         super().register_handler(event_type, handler, priority, name)
 
-        # 维护优先级组
         resolved_name: str = name or getattr(handler, "__name__", "unknown")
         if priority not in self._priority_groups:
             self._priority_groups[priority] = []
         self._priority_groups[priority].append(f"{event_type}.{resolved_name}")
 
     def get_handlers_by_priority(self, priority: int) -> List[str]:
-        """获取指定优先级的处理器列表
-
-        Args:
-            priority: 优先级
-
-        Returns:
-            处理器名称列表
-        """
         return self._priority_groups.get(priority, [])
 
     def get_all_priorities(self) -> List[int]:
-        """获取所有优先级（降序）
-
-        Returns:
-            优先级列表
-        """
         return sorted(self._priority_groups.keys(), reverse=True)

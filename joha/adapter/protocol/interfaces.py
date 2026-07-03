@@ -12,7 +12,7 @@ from typing import (
 )
 from typing import Protocol
 
-from adapter.transport.interfaces import MessageSegmentType
+from joha.adapter.transport.interfaces import MessageSegmentType
 
 logger = logging.getLogger(__name__)
 
@@ -42,52 +42,18 @@ class IEventDispatcher(ABC):
         priority: int = 0,
         name: Optional[str] = None,
     ) -> None:
-        """注册事件处理器
-
-        Args:
-            event_type: 事件类型
-            handler: 处理器函数（同步 / 异步均可）
-            priority: 优先级，越大越高
-            name: 处理器名称（调试用）
-        """
         ...
 
     @abstractmethod
     def unregister_handler(self, event_type: str, handler: Callable[..., Any]) -> bool:
-        """注销事件处理器
-
-        Args:
-            event_type: 事件类型
-            handler: 处理器函数
-
-        Returns:
-            是否成功注销
-        """
         ...
 
     @abstractmethod
     async def dispatch(self, event_type: str, data: Dict[str, Any]) -> None:
-        """分发事件
-
-        Args:
-            event_type: 事件类型
-            data: 事件数据
-
-        Raises:
-            ValueError: 未知事件类型
-        """
         ...
 
     @abstractmethod
     def get_handler_count(self, event_type: Optional[str] = None) -> int:
-        """获取已注册处理器数量
-
-        Args:
-            event_type: 事件类型，None 表示全部
-
-        Returns:
-            处理器数量
-        """
         ...
 
 

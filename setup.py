@@ -17,7 +17,7 @@ except ImportError:
 ROOT_DIR = Path(__file__).resolve().parent
 REQUIREMENTS_FILE = ROOT_DIR / "requirements.txt"
 ROOT_CONFIG_FILE = ROOT_DIR / "config.yaml"
-CONNECTION_CONFIG_FILE = ROOT_DIR / "adapter" / "connection.yaml"
+CONNECTION_CONFIG_FILE = ROOT_DIR / "joha" / "adapter" / "connection.yaml"
 APP_CONFIG_FILE = ROOT_DIR / "joha" / "config" / "config.json"
 RUN_FILE = ROOT_DIR / "run.py"
 

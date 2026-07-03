@@ -1,20 +1,20 @@
 """
 兼容导出层 (Core Facade)
 统一 re-export transport + protocol 的所有公开类，
-使 adapter.core.xxx 的导入路径继续工作
+使 joha.adapter.core.xxx 的导入路径继续工作
 """
 
 from __future__ import annotations
 
 # ---- transport 层 ----
-from adapter.transport import NapCatClient
-from adapter.transport.interfaces import (
+from joha.adapter.transport import NapCatClient
+from joha.adapter.transport.interfaces import (
     IClient,
     IConnectionEventListener,
 )
 
 # ---- protocol 层 ----
-from adapter.protocol import (
+from joha.adapter.protocol import (
     BotAPI,
     EventBus,
     EventDispatcher,

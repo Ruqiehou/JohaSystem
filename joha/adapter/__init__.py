@@ -5,10 +5,10 @@ NapCat 适配层：连接、事件、API、配置管理
 
 from __future__ import annotations
 
-from .message_client import MessageClient
-from .config import Config, ConfigManager, config_manager, setup_logging, get_logger
-from .transport import NapCatClient
-from .protocol import (
+from joha.adapter.message_client import MessageClient
+from joha.adapter.config import Config, ConfigManager, config_manager, setup_logging, get_logger
+from joha.adapter.transport import NapCatClient
+from joha.adapter.protocol import (
     BotAPI,
     EventBus,
     BaseEvent,
