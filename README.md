@@ -6,7 +6,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
-![Version](https://img.shields.io/badge/Version-3.5.0-green.svg)
+![Version](https://img.shields.io/badge/Version-3.6.0-green.svg)
 
 [功能特性](#-功能特性) • [快速开始](#-快速开始) • [配置说明](#-配置说明) • [命令参考](#-命令参考) • [架构说明](#-架构说明) • [更新日志](CHANGELOG.md)
 
