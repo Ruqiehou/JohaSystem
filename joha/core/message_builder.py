@@ -102,7 +102,7 @@ class MessageBuilder:
             return False
         
         # 从配置中获取bot昵称列表
-        from joha.decision.reply_config import reply_cfg
+        from joha.decision.reply_decision import reply_cfg
         bot_names = reply_cfg.bot_nicknames
         
         # 检查消息中是否包含任何bot昵称
