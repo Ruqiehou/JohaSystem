@@ -60,14 +60,6 @@ class ReplyConfig:
         return self._load().get("thresholds", {})
 
     @property
-    def blend(self) -> Dict[str, float]:
-        return self._load().get("blend", {})
-
-    @property
-    def ai_intent_trigger(self) -> Dict[str, Any]:
-        return self._load().get("ai_intent_trigger", {})
-
-    @property
     def group_dynamic(self) -> Dict[str, float]:
         return self._load().get("group_dynamic", {})
 
@@ -140,7 +132,6 @@ class MessageContext:
     user_rate_limited: bool = False
     intent: str = "chat"
     intent_confidence: float = 0.0
-    ai_intent_result: Optional[Dict] = None
 
 
 def _detect_intent(text: str) -> tuple:
@@ -164,45 +155,6 @@ def _detect_intent(text: str) -> tuple:
     best = scores.most_common(1)[0]
     confidence = min(best[1] * mult, 1.0)
     return best[0], confidence
-
-
-def _blend_intent_sources(rule_intent: str, rule_confidence: float, ai_result: Optional[Dict] = None) -> tuple:
-    if not ai_result:
-        return rule_intent, rule_confidence
-
-    bl = reply_cfg.blend
-    ai_intent = ai_result.get('intent', rule_intent)
-    ai_confidence = float(ai_result.get('confidence', 0.0) or 0.0)
-
-    if rule_intent == ai_intent:
-        c = min(1.0, rule_confidence * bl["same_intent_rule_weight"] + ai_confidence * bl["same_intent_ai_weight"] + bl["same_intent_bonus"])
-        return rule_intent, c
-
-    rd = bl["rule_dominant_threshold"]
-    ad = bl["ai_dominant_threshold"]
-    if rule_confidence >= rd and ai_confidence <= 0.55:
-        return rule_intent, rule_confidence
-    if ai_confidence >= ad and rule_confidence <= 0.55:
-        return ai_intent, ai_confidence
-
-    rule_score = rule_confidence * bl["disagree_rule_weight"]
-    ai_score = ai_confidence * bl["disagree_ai_weight"]
-    selected_intent = ai_intent if ai_score > rule_score else rule_intent
-    selected_score = ai_score if ai_score > rule_score else rule_score
-
-    total_score = rule_score + ai_score
-    blended = selected_score / total_score if total_score > 0 else 0.5
-    blended = max(bl["min_confidence"], min(bl["max_confidence"], blended))
-    return selected_intent, blended
-
-
-def _is_ai_intent_needed(rule_intent: str, rule_confidence: float) -> bool:
-    ait = reply_cfg.ai_intent_trigger
-    if rule_confidence >= ait["high_confidence_min"]:
-        return rule_intent in set(ait["high_confidence_intents"])
-    if rule_confidence <= ait["low_confidence_max"]:
-        return True
-    return rule_intent in set(ait["medium_confidence_intents"])
 
 
 def _is_continuation(text: str, last_bot_msg: str) -> float:
@@ -304,21 +256,7 @@ def compute_reply_prob(ctx: MessageContext, cooldown: CooldownManager = cooldown
     if profile.is_blocked:
         return 0.0
 
-    from joha.config.config_manager import config as config_manager
-    # 斜杠命令跳过 AI 意图识别
-    use_ai_intent = False if ctx.text.startswith('/') else config_manager.get("intent_recognition.enabled", False)
-
-    rule_intent, rule_confidence = _detect_intent(ctx.text)
-    ai_result = None
-    if use_ai_intent and _is_ai_intent_needed(rule_intent, rule_confidence):
-        try:
-            from joha.decision.intent_classifier import get_intent_classifier
-            classifier = get_intent_classifier()
-            ai_result = classifier.classify_intent(ctx.text)
-        except Exception as e:
-            tprint("error", f"[AI Intent Detection] 失败，回退到规则检测: {e}")
-
-    ctx.intent, ctx.intent_confidence = _blend_intent_sources(rule_intent, rule_confidence, ai_result)
+    ctx.intent, ctx.intent_confidence = _detect_intent(ctx.text)
 
     sd = reply_cfg.spam_detection
     if ctx.intent == "spam" and ctx.intent_confidence > sd["block_intent_confidence"]:

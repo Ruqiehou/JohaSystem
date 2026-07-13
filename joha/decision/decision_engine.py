@@ -3,7 +3,6 @@
 统一编排决策流水线：意图分析 → 命令检测 → 回复概率 → 动作分级 → 工具调度
 各子模块（分）保持专注单一职责，由本引擎串联整合
 """
-import time
 from typing import Dict, Optional, Any
 from dataclasses import dataclass, field
 
@@ -12,13 +11,11 @@ from joha.decision.reply_decision import (
 )
 from joha.decision.cooldown import cooldown_manager, CooldownManager
 from joha.decision.group_state import group_state_manager
-from joha.decision.intent_classifier import get_intent_classifier, IntentClassifier
 from joha.config.logger import johalog_logger, tprint
 
 # ==================== 命令分析器 (from command_analyzer.py) ====================
 
 import json
-from typing import Dict
 from joha.ai.clients import create_client_from_provider
 from joha.ai.providers import provider_manager, Provider
 from joha.config.config_manager import config as config_manager
@@ -137,11 +134,9 @@ class DecisionEngine:
         self,
         cooldown: CooldownManager = cooldown_manager,
         cmd_analyzer: CommandAnalyzer = command_analyzer,
-        intent_cls: IntentClassifier = None,
     ):
         self.cooldown = cooldown
         self.command_analyzer = cmd_analyzer
-        self.intent_classifier = intent_cls or get_intent_classifier()
         self._stats = {"total_calls": 0, "replied": 0, "skipped": 0}
 
     def process(
@@ -277,7 +272,6 @@ class DecisionEngine:
         """刷新各子模块状态"""
         self.cooldown = cooldown_manager
         self.command_analyzer = command_analyzer
-        self.intent_classifier = get_intent_classifier()
 
 
 _engine_instance: Optional[DecisionEngine] = None
