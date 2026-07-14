@@ -240,7 +240,7 @@ settings:
 2. 代码中调用 `reply_cfg.reload()`
 
 ```python
-from joha.decision.reply_config import reply_cfg
+from joha.decision.reply_decision import reply_cfg
 
 # 手动触发重载
 reply_cfg.reload()

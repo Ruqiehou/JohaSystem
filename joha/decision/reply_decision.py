@@ -17,7 +17,6 @@ from joha.managers.user_profile import UserProfile, user_profile_manager
 from joha.decision.cooldown import CooldownManager, cooldown_manager
 from joha.decision.group_state import group_state_manager
 
-# ==================== 配置加载器 (from reply_config.py) ====================
 
 CONFIG_FILE = Path(__file__).resolve().parent.parent / "config" / "reply_decision.json"
 

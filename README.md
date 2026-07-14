@@ -267,9 +267,8 @@ run.py                     ← 统一启动入口
        │
        ├─ decision/        ← 决策大脑层
        │    ├─ decision_engine.py  — 决策引擎
-       │    ├─ reply_decision.py   — 回复决策（Logit + Sigmoid）
-       │    ├─ reply_config.py     — 决策配置加载器
-       │    ├─ intent_classifier.py— AI 意图识别
+       │    ├─ reply_decision.py   — 回复决策（Logit + Sigmoid，含配置）
+       │    ├─ intent_classifier.py— 意图识别（纯规则）
        │    ├─ command_analyzer.py — 自然语言命令分析
        │    ├─ group_state.py      — 群组状态追踪
        │    └─ cooldown.py         — 冷却管理

@@ -73,9 +73,8 @@ Joha 的核心亮点，负责判断机器人在什么场景下应该回复。
 | 模块 | 文件 | 职责 |
 |------|------|------|
 | 决策引擎 | `decision_engine.py` | 总分架构的"总"，编排各子模块 |
-| 回复决策 | `reply_decision.py` | Logit 累加 + Sigmoid 归一化计算回复概率 |
-| 回复配置 | `reply_config.py` | `reply_decision.json` 的懒加载与热重载 |
-| 意图分类 | `intent_classifier.py` | AI 意图识别（规则 + 模型双重判断） |
+| 回复决策 | `reply_decision.py` | Logit 累加 + Sigmoid 归一化计算回复概率（含配置懒加载） |
+| 意图分类 | `intent_classifier.py` | 纯规则意图识别 |
 | 命令分析 | `command_analyzer.py` | 自然语言命令解析（如"帮助"→`/帮助`） |
 | 群组状态 | `group_state.py` | 群活跃度追踪、消息频率统计 |
 | 冷却管理 | `cooldown.py` | 防刷屏，限制短时间连续回复 |

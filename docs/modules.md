@@ -145,14 +145,14 @@ Joha 的核心大脑，决定是否回复消息。
 ### reply_decision.py
 - **职责**: 核心概率计算（Logit 累加 + Sigmoid 归一化）
 
-### reply_config.py
-- **职责**: `reply_decision.json` 的懒加载与热重载
+### reply_decision.py
+- **职责**: 核心概率计算（Logit 累加 + Sigmoid 归一化）+ 配置懒加载与热重载
 
 ### intent_classifier.py
-- **职责**: AI + 规则双重意图识别
+- **职责**: 纯规则意图识别
 
 ### command_analyzer.py
-- **职责**: 自然语言命令解析
+- **职责**: 自然语言命令解析（如"帮助"→`/帮助`）
 
 ### group_state.py
 - **职责**: 群活跃度追踪、消息频率统计

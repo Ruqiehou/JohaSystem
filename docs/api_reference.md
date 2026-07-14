@@ -148,12 +148,12 @@ prob = engine.compute_reply_prob(context)
 
 ## 7. ReplyConfig
 
-路径: `joha.decision.reply_config.reply_cfg`
+路径: `joha.decision.reply_decision.reply_cfg`
 
-决策配置单例。
+决策配置单例（内联在 `reply_decision.py`，懒加载自 `config/reply_decision.json`）。
 
 ```python
-from joha.decision.reply_config import reply_cfg
+from joha.decision.reply_decision import reply_cfg
 
 # 访问配置项
 threshold = reply_cfg.thresholds.group
