@@ -24,6 +24,8 @@ from .managers import (
     history_manager,
     style_learner,
     user_profile_manager,
+    group_conversation,
+    group_memory_manager,
 )
 
 from .config import (
@@ -51,6 +53,8 @@ __all__ = [
     'history_manager',
     'style_learner',
     'user_profile_manager',
+    'group_conversation',
+    'group_memory_manager',
     'group_mode_config',
     'cooldown_manager',
     'config',

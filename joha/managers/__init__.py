@@ -10,6 +10,8 @@ from .personas import (
     update_traits, get_traits, apply_preset,
 )
 from .admin import admin_manager
+from .group_conversation import group_conversation
+from .group_memory import group_memory_manager
 
 __all__ = [
     'history_manager', 'load_history',
@@ -21,4 +23,6 @@ __all__ = [
     'set_group_persona', 'get_group_persona_name', 'get_bindings',
     'update_traits', 'get_traits', 'apply_preset',
     'admin_manager',
+    'group_conversation',
+    'group_memory_manager',
 ]

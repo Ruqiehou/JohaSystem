@@ -118,6 +118,9 @@ class MessageHandler:
                 reply_to_bot=merged_msg.reply_to_bot,
                 is_pure_sticker_or_image=merged_msg.is_pure_sticker_or_image,
                 images=merged_msg.images,
+                merged_text=merged_msg.merged_text,
+                merged_messages=merged_msg.messages,
+                is_merged=merged_msg.count > 1,
             )
 
             # 7. 发送回复（使用 SDK 的 send_group_message）

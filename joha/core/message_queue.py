@@ -195,10 +195,10 @@ class MessageQueueManager:
         if msg_count >= self.max_queue_size:
             return True
         
-        # 条件4: 超过合并窗口 AND 消息数量达到最小合并数
-        # 这样避免单条消息也被过早处理
+        # 条件4: 超过合并窗口 AND (消息数量达到最小合并数 OR 仅一条消息但已超时)
+        # 避免单条消息永久搁置在队列中
         time_elapsed = current_time - first_msg_time
-        if time_elapsed >= self.merge_window and msg_count >= self.min_messages_to_merge:
+        if time_elapsed >= self.merge_window and (msg_count >= self.min_messages_to_merge or msg_count == 1):
             return True
         
         return False

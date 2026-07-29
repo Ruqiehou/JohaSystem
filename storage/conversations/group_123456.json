@@ -1,0 +1,19 @@
+{
+  "group_id": "123456",
+  "messages": [
+    {
+      "timestamp": "2026-07-29 21:01:22",
+      "user_id": "test",
+      "role": "user",
+      "message": "你好",
+      "message_id": ""
+    },
+    {
+      "timestamp": "2026-07-29 21:01:22",
+      "user_id": "bot",
+      "role": "assistant",
+      "message": "你好！有什么可以帮助你的吗？",
+      "message_id": ""
+    }
+  ]
+}

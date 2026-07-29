@@ -15,13 +15,15 @@ HISTORY_DIR = os.path.join(STORAGE_ROOT, "history")
 STYLES_DIR = os.path.join(STORAGE_ROOT, "styles")
 PERSONAS_DIR = os.path.join(STORAGE_ROOT, "personas")
 JOHALOG_DIR = os.path.join(STORAGE_ROOT, "johalog")
+CONVERSATIONS_DIR = os.path.join(STORAGE_ROOT, "conversations")
+MEMORY_DIR = os.path.join(STORAGE_ROOT, "memory")
 GROUP_STATES_FILE = os.path.join(STORAGE_ROOT, "group_states.json")
 GROUP_MODES_FILE = os.path.join(STORAGE_ROOT, "group_modes.json")
 COOLDOWN_FILE = os.path.join(STORAGE_ROOT, "cooldown.json")
 USER_PROFILES_FILE = os.path.join(STORAGE_ROOT, "user_profiles.json")
 
 # 需要运行时自动创建的子目录
-_SUBDIRS = [HISTORY_DIR, STYLES_DIR, PERSONAS_DIR, JOHALOG_DIR]
+_SUBDIRS = [HISTORY_DIR, STYLES_DIR, PERSONAS_DIR, JOHALOG_DIR, CONVERSATIONS_DIR, MEMORY_DIR]
 
 
 def ensure_storage_dirs() -> None:
