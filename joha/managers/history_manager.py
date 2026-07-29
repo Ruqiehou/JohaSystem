@@ -5,6 +5,7 @@
 import json
 import logging
 import os
+import threading
 from datetime import datetime, timedelta
 from typing import List, Dict, Any, Optional
 from collections import Counter
@@ -23,7 +24,15 @@ class HistoryManager:
     def __init__(self, history_dir: str = ""):
         self.history_dir = history_dir or STORAGE_DIR
         self._cache: LRUCache = LRUCache(capacity=50)
+        self._locks: Dict[str, threading.Lock] = {}
+        self._lock_lock = threading.Lock()
         os.makedirs(self.history_dir, exist_ok=True)
+
+    def _get_lock(self, userid: str) -> threading.Lock:
+        with self._lock_lock:
+            if userid not in self._locks:
+                self._locks[userid] = threading.Lock()
+            return self._locks[userid]
 
     def _path(self, userid: str) -> str:
         """生成用户历史文件路径，使用新格式 user_{qq号}.json"""
@@ -100,62 +109,68 @@ class HistoryManager:
     def save_history(self, userid: str, history: Dict[str, List[Dict[str, Any]]]) -> bool:
         """保存用户所有历史记录（按群组隔离的结构）"""
         userid_str = str(userid)
-        ok = self._write_all(userid_str, history)
-        self._cache.clear()
-        return ok
+        lock = self._get_lock(userid_str)
+        with lock:
+            ok = self._write_all(userid_str, history)
+            self._cache.clear()
+            return ok
 
     def add_message(self, userid: str, message: str,
                     group_id: Optional[str] = None) -> List[Dict[str, Any]]:
         """添加消息到历史记录，自动按群组隔离
-        
+
         支持合并消息：如果message包含多条消息（用\n分隔），会分别存储
         """
         userid_str = str(userid)
-        all_history = self._read_all(userid_str)
-        
-        gid = str(group_id) if group_id else "global"
-        
-        if gid not in all_history:
-            all_history[gid] = []
-        
-        messages = message.split('\n') if '\n' in message else [message]
-        
-        for msg in messages:
-            if msg.strip():
-                all_history[gid].append({
-                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    "group_id": gid,
-                    "message": msg.strip(),
-                })
-        
-        self._write_all(userid_str, all_history)
-        self._cache.clear()
-        return self.load_history(userid_str, group_id=group_id)
+        lock = self._get_lock(userid_str)
+        with lock:
+            all_history = self._read_all(userid_str)
+
+            gid = str(group_id) if group_id else "global"
+
+            if gid not in all_history:
+                all_history[gid] = []
+
+            messages = message.split('\n') if '\n' in message else [message]
+
+            for msg in messages:
+                if msg.strip():
+                    all_history[gid].append({
+                        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                        "group_id": gid,
+                        "message": msg.strip(),
+                    })
+
+            self._write_all(userid_str, all_history)
+            self._cache.clear()
+            return self.load_history(userid_str, group_id=group_id)
 
     def clear_history(self, userid: str, group_id: Optional[str] = None) -> bool:
         """清空用户历史记录，可选择清空特定群组"""
         userid_str = str(userid)
-        try:
-            if group_id is not None:
-                # 只清空特定群组的记录
-                all_history = self._read_all(userid_str)
-                gid = str(group_id)
-                if gid in all_history:
-                    del all_history[gid]
-                self._write_all(userid_str, all_history)
-                logger.info(f"已清空用户 {userid_str} 在群组 {gid} 的历史记录")
-            else:
-                # 清空所有记录
-                path = self._path(userid_str)
-                if os.path.exists(path):
-                    os.remove(path)
-                logger.info(f"已清空用户 {userid_str} 的所有历史记录")
-            
-            self._cache.clear()
-            return True
-        except Exception as e:
-            logger.error(f"清空历史记录失败 {userid_str}: {e}")
-            return False
+        lock = self._get_lock(userid_str)
+        with lock:
+            try:
+                if group_id is not None:
+                    # 只清空特定群组的记录
+                    all_history = self._read_all(userid_str)
+                    gid = str(group_id)
+                    if gid in all_history:
+                        del all_history[gid]
+                    self._write_all(userid_str, all_history)
+                    logger.info(f"已清空用户 {userid_str} 在群组 {gid} 的历史记录")
+                else:
+                    # 清空所有记录
+                    path = self._path(userid_str)
+                    if os.path.exists(path):
+                        os.remove(path)
+                    logger.info(f"已清空用户 {userid_str} 的所有历史记录")
+
+                self._cache.clear()
+                return True
+            except Exception as e:
+                logger.error(f"清空历史记录失败 {userid_str}: {e}")
+                return False
 
     def get_recent_history(self, userid: str, limit: int = 10,
                            group_id: Optional[str] = None) -> List[Dict[str, Any]]:
@@ -168,36 +183,38 @@ class HistoryManager:
     def cleanup_old_entries(self, userid: str, max_age_days: int = 7) -> int:
         """清理过期的历史记录"""
         userid_str = str(userid)
-        cutoff = datetime.now() - timedelta(days=max_age_days)
-        all_history = self._read_all(userid_str)
-        total_removed = 0
-        
-        for group_id, records in all_history.items():
-            kept = []
-            removed = 0
-            for record in records:
-                ts = record.get("timestamp", "")
-                try:
-                    dt = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S")
-                except Exception:
-                    kept.append(record)
-                    continue
-                if dt < cutoff:
-                    removed += 1
-                else:
-                    kept.append(record)
-            
-            if removed > 0:
-                all_history[group_id] = kept
-                total_removed += removed
-                logger.info(f"清理用户 {userid_str} 在群组 {group_id} 的 {removed} 条旧记录")
-        
-        if total_removed > 0:
-            self._write_all(userid_str, all_history)
-            self._cache.clear()
-            logger.info(f"总共清理用户 {userid_str} 的 {total_removed} 条旧记录")
-        
-        return total_removed
+        lock = self._get_lock(userid_str)
+        with lock:
+            cutoff = datetime.now() - timedelta(days=max_age_days)
+            all_history = self._read_all(userid_str)
+            total_removed = 0
+
+            for group_id, records in all_history.items():
+                kept = []
+                removed = 0
+                for record in records:
+                    ts = record.get("timestamp", "")
+                    try:
+                        dt = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S")
+                    except Exception:
+                        kept.append(record)
+                        continue
+                    if dt < cutoff:
+                        removed += 1
+                    else:
+                        kept.append(record)
+
+                if removed > 0:
+                    all_history[group_id] = kept
+                    total_removed += removed
+                    logger.info(f"清理用户 {userid_str} 在群组 {group_id} 的 {removed} 条旧记录")
+
+            if total_removed > 0:
+                self._write_all(userid_str, all_history)
+                self._cache.clear()
+                logger.info(f"总共清理用户 {userid_str} 的 {total_removed} 条旧记录")
+
+            return total_removed
 
     def get_storage_stats(self) -> Dict[str, Any]:
         """获取存储统计信息"""

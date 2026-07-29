@@ -1,0 +1,19 @@
+{
+  "group_id": "g1",
+  "messages": [
+    {
+      "timestamp": "2026-07-29 22:18:57",
+      "user_id": "u1",
+      "role": "user",
+      "message": "hello",
+      "message_id": ""
+    },
+    {
+      "timestamp": "2026-07-29 22:18:57",
+      "user_id": "bot",
+      "role": "assistant",
+      "message": "hi",
+      "message_id": ""
+    }
+  ]
+}

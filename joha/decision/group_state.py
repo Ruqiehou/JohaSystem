@@ -8,6 +8,7 @@ import time
 import re
 import json
 import os
+import threading
 from collections import deque, Counter
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass, field
@@ -147,40 +148,43 @@ class GroupStateManager:
 
     def __init__(self):
         self._states: Dict[str, GroupState] = {}
+        self._file_lock = threading.Lock()
         self._load_from_file()
     
     def _load_from_file(self):
         """从文件加载群组状态"""
-        try:
-            if os.path.exists(GROUP_STATE_FILE):
-                with open(GROUP_STATE_FILE, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                
-                for group_id, state_data in data.items():
-                    self._states[group_id] = GroupState.from_dict(state_data)
-                
-                if self._states:
-                    from joha.config.logger import tprint
-                    tprint("info", f"[GroupState] 已恢复 {len(self._states)} 个群组状态")
-        except Exception as e:
-            from joha.config.logger import tprint
-            tprint("error", f"[GroupState] 加载群组状态失败: {e}")
-    
+        with self._file_lock:
+            try:
+                if os.path.exists(GROUP_STATE_FILE):
+                    with open(GROUP_STATE_FILE, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+
+                    for group_id, state_data in data.items():
+                        self._states[group_id] = GroupState.from_dict(state_data)
+
+                    if self._states:
+                        from joha.config.logger import tprint
+                        tprint("info", f"[GroupState] 已恢复 {len(self._states)} 个群组状态")
+            except Exception as e:
+                from joha.config.logger import tprint
+                tprint("error", f"[GroupState] 加载群组状态失败: {e}")
+
     def _save_to_file(self):
         """保存所有群组状态到文件"""
-        try:
-            storage_dir = os.path.dirname(GROUP_STATE_FILE)
-            os.makedirs(storage_dir, exist_ok=True)
-            
-            data = {}
-            for group_id, state in self._states.items():
-                data[group_id] = state.to_dict()
-            
-            with open(GROUP_STATE_FILE, "w", encoding="utf-8") as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
-        except Exception as e:
-            from joha.config.logger import tprint
-            tprint("error", f"[GroupState] 保存群组状态失败: {e}")
+        with self._file_lock:
+            try:
+                storage_dir = os.path.dirname(GROUP_STATE_FILE)
+                os.makedirs(storage_dir, exist_ok=True)
+
+                data = {}
+                for group_id, state in self._states.items():
+                    data[group_id] = state.to_dict()
+
+                with open(GROUP_STATE_FILE, "w", encoding="utf-8") as f:
+                    json.dump(data, f, ensure_ascii=False, indent=2)
+            except Exception as e:
+                from joha.config.logger import tprint
+                tprint("error", f"[GroupState] 保存群组状态失败: {e}")
 
     def get(self, group_id: str) -> GroupState:
         if group_id not in self._states:

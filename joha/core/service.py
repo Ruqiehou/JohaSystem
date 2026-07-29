@@ -194,14 +194,10 @@ class MessageService:
         if not ctx.images:
             return True
 
-        try:
-            from joha.ai.bot import get_chat_engine
-            current_model = getattr(get_chat_engine(), 'model', generator.current_model)
-            if not self._supports_multimodal(current_model):
-                tprint("warning", f"[多模态] 模型 {current_model} 不支持图片，已跳过 {len(ctx.images)} 张图片")
-                johalog_logger.warning(f"模型 {current_model} 不支持多模态，已跳过图片")
-                ctx.images = []
-        except Exception:
+        current_model = generator.current_model
+        if not self._supports_multimodal(current_model):
+            tprint("warning", f"[多模态] 模型 {current_model} 不支持图片，已跳过 {len(ctx.images)} 张图片")
+            johalog_logger.warning(f"模型 {current_model} 不支持多模态，已跳过图片")
             ctx.images = []
 
         return True
