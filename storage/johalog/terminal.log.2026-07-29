@@ -1,0 +1,38 @@
+2026-07-29 20:58:44 - terminal - INFO - [Generator] 已加载 AI 客户端 | 默认 | 模型: 
+2026-07-29 20:58:45 - terminal - WARNING - [ToolRegistry] 工具目录不存在: C:\Users\ASUS\Desktop\JohaChat\tools
+2026-07-29 20:58:45 - terminal - INFO - [消息队列] 已初始化，合并窗口: 120.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-07-29 20:58:52 - terminal - INFO - [Generator] 已加载 AI 客户端 | 默认 | 模型: 
+2026-07-29 20:58:52 - terminal - WARNING - [ToolRegistry] 工具目录不存在: C:\Users\ASUS\Desktop\JohaChat\tools
+2026-07-29 20:58:52 - terminal - INFO - [消息队列] 已初始化，合并窗口: 120.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-07-29 20:59:02 - terminal - INFO - [Generator] 已加载 AI 客户端 | 默认 | 模型: 
+2026-07-29 20:59:02 - terminal - WARNING - [ToolRegistry] 工具目录不存在: C:\Users\ASUS\Desktop\JohaChat\tools
+2026-07-29 20:59:02 - terminal - INFO - [消息队列] 已初始化，合并窗口: 120.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-07-29 20:59:12 - terminal - INFO - [Generator] 已加载 AI 客户端 | 默认 | 模型: 
+2026-07-29 20:59:13 - terminal - WARNING - [ToolRegistry] 工具目录不存在: C:\Users\ASUS\Desktop\JohaChat\tools
+2026-07-29 20:59:13 - terminal - INFO - [消息队列] 已初始化，合并窗口: 120.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-07-29 20:59:25 - terminal - INFO - [Generator] 已加载 AI 客户端 | 默认 | 模型: 
+2026-07-29 20:59:25 - terminal - WARNING - [ToolRegistry] 工具目录不存在: C:\Users\ASUS\Desktop\JohaChat\tools
+2026-07-29 20:59:25 - terminal - INFO - [消息队列] 已初始化，合并窗口: 120.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-07-29 20:59:26 - terminal - INFO - [消息合并] 群123456 | 合并2条消息 (0.2秒) | 内容: 单条消息测试 再来一条
+2026-07-29 20:59:38 - terminal - INFO - [Generator] 已加载 AI 客户端 | 默认 | 模型: 
+2026-07-29 20:59:38 - terminal - WARNING - [ToolRegistry] 工具目录不存在: C:\Users\ASUS\Desktop\JohaChat\tools
+2026-07-29 20:59:38 - terminal - INFO - [消息队列] 已初始化，合并窗口: 120.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-07-29 20:59:38 - terminal - INFO - [消息合并] 群999999 | 合并1条消息 (0.0秒) | 内容: 孤独的单条消息
+2026-07-29 20:59:58 - terminal - INFO - [Generator] 已加载 AI 客户端 | 默认 | 模型: 
+2026-07-29 20:59:58 - terminal - WARNING - [ToolRegistry] 工具目录不存在: C:\Users\ASUS\Desktop\JohaChat\tools
+2026-07-29 20:59:59 - terminal - INFO - [消息队列] 已初始化，合并窗口: 120.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-07-29 20:59:59 - terminal - INFO - [消息合并] 群999999 | 合并2条消息 (0.2秒) | 内容: 孤独的单条消息 第二条来了
+2026-07-29 21:01:22 - terminal - INFO - [Generator] 已加载 AI 客户端 | 默认 | 模型: 
+2026-07-29 21:01:22 - terminal - WARNING - [ToolRegistry] 工具目录不存在: C:\Users\ASUS\Desktop\JohaChat\tools
+2026-07-29 21:01:22 - terminal - INFO - [消息队列] 已初始化，合并窗口: 120.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-07-29 21:01:34 - terminal - INFO - [Generator] 已加载 AI 客户端 | 默认 | 模型: 
+2026-07-29 21:01:34 - terminal - WARNING - [ToolRegistry] 工具目录不存在: C:\Users\ASUS\Desktop\JohaChat\tools
+2026-07-29 21:01:35 - terminal - INFO - [消息队列] 已初始化，合并窗口: 120.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-07-29 22:17:48 - terminal - INFO - [Generator] 已加载 AI 客户端 | 默认 | 模型: 
+2026-07-29 22:18:14 - terminal - INFO - [Generator] 已加载 AI 客户端 | 默认 | 模型: 
+2026-07-29 22:18:16 - terminal - WARNING - [ToolRegistry] 工具目录不存在: C:\Users\ASUS\Desktop\JohaChat\tools
+2026-07-29 22:18:16 - terminal - INFO - [消息队列] 已初始化，合并窗口: 120.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-07-29 22:18:55 - terminal - INFO - [Generator] 已加载 AI 客户端 | 默认 | 模型: 
+2026-07-29 22:18:56 - terminal - WARNING - [ToolRegistry] 工具目录不存在: C:\Users\ASUS\Desktop\JohaChat\tools
+2026-07-29 22:18:57 - terminal - INFO - [消息队列] 已初始化，合并窗口: 120.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-07-29 22:18:57 - terminal - INFO - [消息合并] 群g1 | 合并2条消息 (0.2秒) | 内容: single second

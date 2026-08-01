@@ -14,14 +14,60 @@
 7. 发送回复
 """
 import re
+from typing import Optional
+
 from joha.adapter import GroupMessageEvent
 from joha.core.service import message_service
 from joha.core.commands import command_handler, normalize_fallback_command
 from joha.core.runtime_context import runtime_context
-from joha.core.message_queue import message_queue_manager
+from joha.core.message_queue import message_queue_manager, MergedMessage
 from joha.core.image_utils import extract_images_from_sdk_event
 from joha.config.logger import johalog_logger, tprint
 from joha.decision.group_state import group_state_manager
+
+
+async def process_merged_message(merged_msg: MergedMessage, bot_api) -> Optional[str]:
+    """处理合并后的消息：调用服务层生成回复 + 发送
+
+    供正常消息路径和过期队列后台任务共用。
+    """
+    # 1. 调用服务层生成回复
+    response = await message_service.process_message(
+        userid=merged_msg.user_id,
+        message=merged_msg.merged_text,
+        group_id=merged_msg.group_id,
+        is_at_bot=merged_msg.is_at_bot,
+        reply_to_bot=merged_msg.reply_to_bot,
+        is_pure_sticker_or_image=merged_msg.is_pure_sticker_or_image,
+        images=merged_msg.images,
+        merged_text=merged_msg.merged_text,
+        merged_messages=merged_msg.messages,
+        is_merged=merged_msg.count > 1,
+    )
+
+    # 2. 发送回复
+    if response:
+        try:
+            group_id = str(merged_msg.group_id)
+            # 检测工具返回中是否包含截图路径
+            screenshot_match = re.search(r'📁\s*(.+\.png)', response)
+
+            if screenshot_match:
+                screenshot_path = screenshot_match.group(1).strip()
+                await bot_api.send_group_message(
+                    group_id=int(group_id),
+                    message=response,
+                    image_path=screenshot_path,
+                )
+            else:
+                await bot_api.send_group_message(group_id=group_id, message=response)
+
+            # 记录机器人回复到群组状态
+            group_state_manager.record_bot_reply(group_id=group_id, text=response)
+        except Exception as e:
+            tprint("error", f"发送消息失败: {e}")
+
+    return response
 
 
 class MessageHandler:
@@ -109,42 +155,7 @@ class MessageHandler:
         
         # 如果返回了合并消息，则处理；否则等待更多消息
         if merged_msg:
-            # 6. 调用服务层生成回复
-            response = await message_service.process_message(
-                userid=merged_msg.user_id,
-                message=merged_msg.merged_text,
-                group_id=merged_msg.group_id,
-                is_at_bot=merged_msg.is_at_bot,
-                reply_to_bot=merged_msg.reply_to_bot,
-                is_pure_sticker_or_image=merged_msg.is_pure_sticker_or_image,
-                images=merged_msg.images,
-                merged_text=merged_msg.merged_text,
-                merged_messages=merged_msg.messages,
-                is_merged=merged_msg.count > 1,
-            )
-
-            # 7. 发送回复（使用 SDK 的 send_group_message）
-            if response:
-                try:
-                    # 检测工具返回中是否包含截图路径
-                    screenshot_match = re.search(r'📁\s*(.+\.png)', response)
-                    
-                    if screenshot_match:
-                        # 提取截图路径并发送图文消息
-                        screenshot_path = screenshot_match.group(1).strip()
-                        await bot_api.send_group_message(
-                            group_id=int(event.group_id),
-                            message=response,
-                            image_path=screenshot_path,
-                        )
-                    else:
-                        # 普通文本消息
-                        await bot_api.send_group_message(group_id=event.group_id, message=response)
-                    
-                    # 记录机器人回复到群组状态
-                    group_state_manager.record_bot_reply(group_id=group_id, text=response)
-                except Exception as e:
-                    tprint("error", f"发送消息失败: {e}")
+            await process_merged_message(merged_msg, bot_api)
 
 
 # 全局处理器实例

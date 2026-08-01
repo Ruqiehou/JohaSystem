@@ -55,6 +55,9 @@ class MessageClient:
         self._notice_handlers: List[NoticeHandler] = []
         self._request_handlers: List[RequestHandler] = []
 
+        # 主循环 tick 回调（用于后台周期任务，如清理过期消息队列）
+        self._tick_handler: Optional[Callable[[], Awaitable[None]]] = None
+
         # 设置消息回调
         self.client.set_message_callback(self._handle_message)
 
@@ -129,6 +132,14 @@ class MessageClient:
         )
 
     # ======================== 装饰器式事件注册 ========================
+
+    def set_tick_handler(self, handler: Callable[[], Awaitable[None]]) -> None:
+        """设置主循环 tick 回调（每秒执行一次，用于后台周期任务）
+
+        Args:
+            handler: 异步无参回调
+        """
+        self._tick_handler = handler
 
     def on_group_message(self) -> Callable[[GroupMsgHandler], GroupMsgHandler]:
         """装饰器：注册群消息事件处理器
@@ -212,6 +223,11 @@ class MessageClient:
 
             while self.client.connected:
                 await asyncio.sleep(1)
+                if self._tick_handler:
+                    try:
+                        await self._tick_handler()
+                    except Exception as e:
+                        logger.error(f"tick 回调执行失败: {e}", exc_info=True)
 
         except KeyboardInterrupt:
             logger.info("收到中断信号，正在关闭...")
