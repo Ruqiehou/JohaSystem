@@ -24,6 +24,11 @@
       "timestamp": "2026-08-11 16:51:06",
       "group_id": "g_hist_iso1",
       "message": "msg1"
+    },
+    {
+      "timestamp": "2026-08-11 16:53:04",
+      "group_id": "g_hist_iso1",
+      "message": "msg1"
     }
   ],
   "g_hist_iso2": [
@@ -49,6 +54,11 @@
     },
     {
       "timestamp": "2026-08-11 16:51:06",
+      "group_id": "g_hist_iso2",
+      "message": "msg2"
+    },
+    {
+      "timestamp": "2026-08-11 16:53:04",
       "group_id": "g_hist_iso2",
       "message": "msg2"
     }

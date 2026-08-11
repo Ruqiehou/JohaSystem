@@ -6,6 +6,7 @@ import os
 import shutil
 import threading
 import uuid
+from unittest.mock import patch
 
 from joha.managers.history_manager import HistoryManager
 
@@ -22,18 +23,19 @@ class TestHistoryManagerConcurrency(unittest.TestCase):
         if os.path.exists(self._tmpdir):
             shutil.rmtree(self._tmpdir, ignore_errors=True)
 
-    def test_add_message_basic(self):
+    def _make_mgr(self):
         import joha.managers.history_manager as mod
         mod.STORAGE_DIR = self._tmpdir
-        mgr = HistoryManager()
+        return HistoryManager()
+
+    def test_add_message_basic(self):
+        mgr = self._make_mgr()
         mgr.add_message("u_hist_basic", "hello", group_id="g_hist_basic")
         history = mgr.load_history("u_hist_basic", group_id="g_hist_basic")
         self.assertTrue(len(history) >= 1)
 
     def test_group_isolation(self):
-        import joha.managers.history_manager as mod
-        mod.STORAGE_DIR = self._tmpdir
-        mgr = HistoryManager()
+        mgr = self._make_mgr()
         mgr.add_message("u_hist_iso", "msg1", group_id="g_hist_iso1")
         mgr.add_message("u_hist_iso", "msg2", group_id="g_hist_iso2")
         h1 = mgr.load_history("u_hist_iso", group_id="g_hist_iso1")
@@ -42,9 +44,7 @@ class TestHistoryManagerConcurrency(unittest.TestCase):
         self.assertEqual(len(h2), 1)
 
     def test_concurrent_writes_no_corruption(self):
-        import joha.managers.history_manager as mod
-        mod.STORAGE_DIR = self._tmpdir
-        mgr = HistoryManager()
+        mgr = self._make_mgr()
         errors = []
         def worker(uid):
             try:
@@ -64,9 +64,7 @@ class TestHistoryManagerConcurrency(unittest.TestCase):
             self.assertEqual(len(h), 20)
 
     def test_clear_history(self):
-        import joha.managers.history_manager as mod
-        mod.STORAGE_DIR = self._tmpdir
-        mgr = HistoryManager()
+        mgr = self._make_mgr()
         mgr.add_message("u_hist_clear", "msg1", group_id="g_hist_clear")
         mgr.add_message("u_hist_clear", "msg2", group_id="g_hist_clear")
         ok = mgr.clear_history("u_hist_clear", group_id="g_hist_clear")

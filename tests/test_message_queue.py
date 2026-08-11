@@ -17,13 +17,9 @@ class TestMessageQueue(unittest.TestCase):
     def setUp(self):
         self.loop = asyncio.new_event_loop()
         asyncio.set_event_loop(self.loop)
-        self._tmpdir = os.path.join(TEST_BASE, str(uuid.uuid4()))
-        os.makedirs(self._tmpdir, exist_ok=True)
 
     def tearDown(self):
         self.loop.close()
-        if os.path.exists(self._tmpdir):
-            shutil.rmtree(self._tmpdir, ignore_errors=True)
 
     async def _add(self, queue, uid, gid, msg, **kw):
         return await queue.add_message(uid, gid, msg, **kw)
@@ -88,11 +84,5 @@ class TestMergedMessage(unittest.TestCase):
         self.assertEqual(msg.count, 2)
 
 
-def clean_test_tmp():
-    if os.path.exists(TEST_BASE):
-        shutil.rmtree(TEST_BASE, ignore_errors=True)
-
-
 if __name__ == "__main__":
-    clean_test_tmp()
     unittest.main()
