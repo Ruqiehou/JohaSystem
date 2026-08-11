@@ -6,7 +6,7 @@ import os
 import shutil
 import threading
 import uuid
-from unittest.mock import patch
+import tempfile
 
 from joha.managers.history_manager import HistoryManager
 
@@ -24,9 +24,8 @@ class TestHistoryManagerConcurrency(unittest.TestCase):
             shutil.rmtree(self._tmpdir, ignore_errors=True)
 
     def _make_mgr(self):
-        import joha.managers.history_manager as mod
-        mod.STORAGE_DIR = self._tmpdir
-        return HistoryManager()
+        # 直接传入 history_dir，避免 patching 模块变量
+        return HistoryManager(history_dir=self._tmpdir)
 
     def test_add_message_basic(self):
         mgr = self._make_mgr()
@@ -36,6 +35,9 @@ class TestHistoryManagerConcurrency(unittest.TestCase):
 
     def test_group_isolation(self):
         mgr = self._make_mgr()
+        # 清空目录确保干净
+        for f in os.listdir(self._tmpdir):
+            os.remove(os.path.join(self._tmpdir, f))
         mgr.add_message("u_hist_iso", "msg1", group_id="g_hist_iso1")
         mgr.add_message("u_hist_iso", "msg2", group_id="g_hist_iso2")
         h1 = mgr.load_history("u_hist_iso", group_id="g_hist_iso1")
@@ -45,6 +47,9 @@ class TestHistoryManagerConcurrency(unittest.TestCase):
 
     def test_concurrent_writes_no_corruption(self):
         mgr = self._make_mgr()
+        # 清空目录确保干净
+        for f in os.listdir(self._tmpdir):
+            os.remove(os.path.join(self._tmpdir, f))
         errors = []
         def worker(uid):
             try:
@@ -130,12 +135,5 @@ class TestGroupStateManager(unittest.TestCase):
         self.assertEqual(state.total_messages, 100)
 
 
-def clean_test_tmp():
-    """清理测试临时目录"""
-    if os.path.exists(TEST_BASE):
-        shutil.rmtree(TEST_BASE, ignore_errors=True)
-
-
 if __name__ == "__main__":
-    clean_test_tmp()
     unittest.main()
