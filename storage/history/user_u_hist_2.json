@@ -1,0 +1,504 @@
+{
+  "g_hist_conc": [
+    {
+      "timestamp": "2026-08-11 16:40:40",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-0"
+    },
+    {
+      "timestamp": "2026-08-11 16:40:40",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-1"
+    },
+    {
+      "timestamp": "2026-08-11 16:40:41",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-2"
+    },
+    {
+      "timestamp": "2026-08-11 16:40:41",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-3"
+    },
+    {
+      "timestamp": "2026-08-11 16:40:41",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-4"
+    },
+    {
+      "timestamp": "2026-08-11 16:40:41",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-5"
+    },
+    {
+      "timestamp": "2026-08-11 16:40:41",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-6"
+    },
+    {
+      "timestamp": "2026-08-11 16:40:41",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-7"
+    },
+    {
+      "timestamp": "2026-08-11 16:40:41",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-8"
+    },
+    {
+      "timestamp": "2026-08-11 16:40:41",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-9"
+    },
+    {
+      "timestamp": "2026-08-11 16:40:41",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-10"
+    },
+    {
+      "timestamp": "2026-08-11 16:40:41",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-11"
+    },
+    {
+      "timestamp": "2026-08-11 16:40:41",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-12"
+    },
+    {
+      "timestamp": "2026-08-11 16:40:41",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-13"
+    },
+    {
+      "timestamp": "2026-08-11 16:40:41",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-14"
+    },
+    {
+      "timestamp": "2026-08-11 16:40:41",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-15"
+    },
+    {
+      "timestamp": "2026-08-11 16:40:41",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-16"
+    },
+    {
+      "timestamp": "2026-08-11 16:40:41",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-17"
+    },
+    {
+      "timestamp": "2026-08-11 16:40:41",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-18"
+    },
+    {
+      "timestamp": "2026-08-11 16:40:41",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-19"
+    },
+    {
+      "timestamp": "2026-08-11 16:42:10",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-0"
+    },
+    {
+      "timestamp": "2026-08-11 16:42:10",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-1"
+    },
+    {
+      "timestamp": "2026-08-11 16:42:10",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-2"
+    },
+    {
+      "timestamp": "2026-08-11 16:42:10",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-3"
+    },
+    {
+      "timestamp": "2026-08-11 16:42:10",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-4"
+    },
+    {
+      "timestamp": "2026-08-11 16:42:10",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-5"
+    },
+    {
+      "timestamp": "2026-08-11 16:42:10",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-6"
+    },
+    {
+      "timestamp": "2026-08-11 16:42:10",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-7"
+    },
+    {
+      "timestamp": "2026-08-11 16:42:10",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-8"
+    },
+    {
+      "timestamp": "2026-08-11 16:42:11",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-9"
+    },
+    {
+      "timestamp": "2026-08-11 16:42:11",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-10"
+    },
+    {
+      "timestamp": "2026-08-11 16:42:11",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-11"
+    },
+    {
+      "timestamp": "2026-08-11 16:42:11",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-12"
+    },
+    {
+      "timestamp": "2026-08-11 16:42:11",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-13"
+    },
+    {
+      "timestamp": "2026-08-11 16:42:11",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-14"
+    },
+    {
+      "timestamp": "2026-08-11 16:42:11",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-15"
+    },
+    {
+      "timestamp": "2026-08-11 16:42:11",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-16"
+    },
+    {
+      "timestamp": "2026-08-11 16:42:11",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-17"
+    },
+    {
+      "timestamp": "2026-08-11 16:42:11",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-18"
+    },
+    {
+      "timestamp": "2026-08-11 16:42:11",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-19"
+    },
+    {
+      "timestamp": "2026-08-11 16:45:33",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-0"
+    },
+    {
+      "timestamp": "2026-08-11 16:45:33",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-1"
+    },
+    {
+      "timestamp": "2026-08-11 16:45:33",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-2"
+    },
+    {
+      "timestamp": "2026-08-11 16:45:33",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-3"
+    },
+    {
+      "timestamp": "2026-08-11 16:45:33",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-4"
+    },
+    {
+      "timestamp": "2026-08-11 16:45:33",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-5"
+    },
+    {
+      "timestamp": "2026-08-11 16:45:33",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-6"
+    },
+    {
+      "timestamp": "2026-08-11 16:45:33",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-7"
+    },
+    {
+      "timestamp": "2026-08-11 16:45:33",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-8"
+    },
+    {
+      "timestamp": "2026-08-11 16:45:33",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-9"
+    },
+    {
+      "timestamp": "2026-08-11 16:45:33",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-10"
+    },
+    {
+      "timestamp": "2026-08-11 16:45:33",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-11"
+    },
+    {
+      "timestamp": "2026-08-11 16:45:33",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-12"
+    },
+    {
+      "timestamp": "2026-08-11 16:45:33",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-13"
+    },
+    {
+      "timestamp": "2026-08-11 16:45:33",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-14"
+    },
+    {
+      "timestamp": "2026-08-11 16:45:33",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-15"
+    },
+    {
+      "timestamp": "2026-08-11 16:45:33",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-16"
+    },
+    {
+      "timestamp": "2026-08-11 16:45:33",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-17"
+    },
+    {
+      "timestamp": "2026-08-11 16:45:33",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-18"
+    },
+    {
+      "timestamp": "2026-08-11 16:45:33",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-19"
+    },
+    {
+      "timestamp": "2026-08-11 16:49:18",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-0"
+    },
+    {
+      "timestamp": "2026-08-11 16:49:18",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-1"
+    },
+    {
+      "timestamp": "2026-08-11 16:49:19",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-2"
+    },
+    {
+      "timestamp": "2026-08-11 16:49:19",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-3"
+    },
+    {
+      "timestamp": "2026-08-11 16:49:19",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-4"
+    },
+    {
+      "timestamp": "2026-08-11 16:49:19",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-5"
+    },
+    {
+      "timestamp": "2026-08-11 16:49:19",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-6"
+    },
+    {
+      "timestamp": "2026-08-11 16:49:19",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-7"
+    },
+    {
+      "timestamp": "2026-08-11 16:49:19",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-8"
+    },
+    {
+      "timestamp": "2026-08-11 16:49:19",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-9"
+    },
+    {
+      "timestamp": "2026-08-11 16:49:19",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-10"
+    },
+    {
+      "timestamp": "2026-08-11 16:49:19",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-11"
+    },
+    {
+      "timestamp": "2026-08-11 16:49:19",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-12"
+    },
+    {
+      "timestamp": "2026-08-11 16:49:19",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-13"
+    },
+    {
+      "timestamp": "2026-08-11 16:49:19",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-14"
+    },
+    {
+      "timestamp": "2026-08-11 16:49:19",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-15"
+    },
+    {
+      "timestamp": "2026-08-11 16:49:19",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-16"
+    },
+    {
+      "timestamp": "2026-08-11 16:49:19",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-17"
+    },
+    {
+      "timestamp": "2026-08-11 16:49:19",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-18"
+    },
+    {
+      "timestamp": "2026-08-11 16:49:19",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-19"
+    },
+    {
+      "timestamp": "2026-08-11 16:51:06",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-0"
+    },
+    {
+      "timestamp": "2026-08-11 16:51:06",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-1"
+    },
+    {
+      "timestamp": "2026-08-11 16:51:06",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-2"
+    },
+    {
+      "timestamp": "2026-08-11 16:51:06",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-3"
+    },
+    {
+      "timestamp": "2026-08-11 16:51:06",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-4"
+    },
+    {
+      "timestamp": "2026-08-11 16:51:06",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-5"
+    },
+    {
+      "timestamp": "2026-08-11 16:51:06",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-6"
+    },
+    {
+      "timestamp": "2026-08-11 16:51:06",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-7"
+    },
+    {
+      "timestamp": "2026-08-11 16:51:06",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-8"
+    },
+    {
+      "timestamp": "2026-08-11 16:51:06",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-9"
+    },
+    {
+      "timestamp": "2026-08-11 16:51:06",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-10"
+    },
+    {
+      "timestamp": "2026-08-11 16:51:06",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-11"
+    },
+    {
+      "timestamp": "2026-08-11 16:51:06",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-12"
+    },
+    {
+      "timestamp": "2026-08-11 16:51:06",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-13"
+    },
+    {
+      "timestamp": "2026-08-11 16:51:06",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-14"
+    },
+    {
+      "timestamp": "2026-08-11 16:51:06",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-15"
+    },
+    {
+      "timestamp": "2026-08-11 16:51:06",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-16"
+    },
+    {
+      "timestamp": "2026-08-11 16:51:06",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-17"
+    },
+    {
+      "timestamp": "2026-08-11 16:51:06",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-18"
+    },
+    {
+      "timestamp": "2026-08-11 16:51:06",
+      "group_id": "g_hist_conc",
+      "message": "msg-u_hist_2-19"
+    }
+  ]
+}

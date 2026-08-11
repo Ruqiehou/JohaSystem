@@ -1,0 +1,29 @@
+{
+  "g_hist_basic": [
+    {
+      "timestamp": "2026-08-11 16:40:40",
+      "group_id": "g_hist_basic",
+      "message": "hello"
+    },
+    {
+      "timestamp": "2026-08-11 16:42:10",
+      "group_id": "g_hist_basic",
+      "message": "hello"
+    },
+    {
+      "timestamp": "2026-08-11 16:45:33",
+      "group_id": "g_hist_basic",
+      "message": "hello"
+    },
+    {
+      "timestamp": "2026-08-11 16:49:18",
+      "group_id": "g_hist_basic",
+      "message": "hello"
+    },
+    {
+      "timestamp": "2026-08-11 16:51:06",
+      "group_id": "g_hist_basic",
+      "message": "hello"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "group_id": "g_test_dedup",
+  "messages": [
+    {
+      "timestamp": "2026-08-11 16:40:39",
+      "user_id": "u1",
+      "role": "user",
+      "message": "first",
+      "message_id": "m1"
+    }
+  ]
+}

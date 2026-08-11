@@ -1,10 +1,17 @@
 {
   "group_id": "g1",
   "summary": "",
-  "topics": [],
-  "facts": [
-    "test fact"
+  "topics": [
+    "AI",
+    "编程"
   ],
-  "updated_at": "2026-07-29 22:18:57",
+  "facts": [
+    "test fact",
+    "用户喜欢猫",
+    "这是一个测试群",
+    "test",
+    "fact2"
+  ],
+  "updated_at": "2026-08-11 16:35:07",
   "version": 1
 }
