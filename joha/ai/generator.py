@@ -182,7 +182,6 @@ class Generator:
             persona_name="joha",
             history=load_history(userid, group_id=group_id) if userid else [],
             include_style=True,
-            include_rag=False,
             history_limit=5,
             group_id=group_id,
         )

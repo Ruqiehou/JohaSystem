@@ -12,8 +12,8 @@ from typing import Dict, List, Optional, Callable, Any
 from joha.config.logger import tprint
 
 
-# 默认工具扫描路径
-DEFAULT_TOOLS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "tools")
+# 默认工具扫描路径（工具位于 joha/tools/ 下）
+DEFAULT_TOOLS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "tools")
 
 
 class ToolRegistry:

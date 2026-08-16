@@ -29,9 +29,6 @@ class MessageBuilder:
         persona_name: str = "joha",
         history: list = None,
         include_style: bool = True,
-        include_rag: bool = True,
-        rag_top_k: int = 3,
-        rag_min_score: float = 0.15,
         history_limit: int = 10,
         group_id: Optional[str] = None,
     ) -> List[Dict]:

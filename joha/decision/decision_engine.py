@@ -61,7 +61,7 @@ class CommandAnalyzer:
         """
         分析用户输入，判断是否需要调用工具
         返回格式: {
-            'action': 'chat' | 'search' | 'knowledge' | 'webpage',
+            'action': 'chat' | 'search' | 'webpage',
             'query': str,
             'confidence': float
         }
@@ -70,14 +70,13 @@ class CommandAnalyzer:
             return {'action': 'chat', 'query': text, 'confidence': 1.0}
 
         prompt = f"""请分析以下用户输入的意图。如果用户想查询实时信息、新闻、天气或事实性知识，请选择 'search'。
-如果用户想查找项目历史、过往对话或本地记录，请选择 'knowledge'。
 如果用户提供了 URL 并希望了解内容，请选择 'webpage'。
 否则选择 'chat'。
 
 用户输入：{text}
 
 只返回 JSON 格式：
-{{"action": "chat/search/knowledge/webpage", "query": "提取出的搜索关键词或原话", "confidence": 0.9}}
+{{"action": "chat/search/webpage", "query": "提取出的搜索关键词或原话", "confidence": 0.9}}
 """
         messages = [{"role": "user", "content": prompt}]
         

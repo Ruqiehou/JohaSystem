@@ -231,7 +231,6 @@ class MessageService:
                 persona_name="joha",
                 history=history,
                 include_style=True,
-                include_rag=False,
                 group_id=ctx.group_id,
             )
         except Exception as e:

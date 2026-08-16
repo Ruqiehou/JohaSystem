@@ -1,4 +1,4 @@
-﻿# Joha 依赖包
+# Joha 依赖包
 # 使用方法：pip install -r requirements.txt
 
 # 核心依赖
@@ -6,10 +6,6 @@ websockets>=12.0
 openai>=1.0.0
 pyyaml>=6.0
 
-# 知识库
-jieba>=0.42.1           # 中文分词
-
 # 可选依赖
 python-dotenv>=1.0.0  # 环境变量管理
 watchdog>=3.0.0       # 开发热重载
-

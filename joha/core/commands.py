@@ -111,7 +111,7 @@ def normalize_fallback_command(text: str) -> Optional[str]:
     compact = "".join(raw.split())
     if compact in FALLBACK_COMMAND_ALIASES:
         return FALLBACK_COMMAND_ALIASES[compact]
-    for prefix in ["添加管理员", "删除管理员", "风格", "清除风格", "切换模型", "知识库搜索", "知识库添加", "人设信息", "切换人设", "绑定人设", "创建人设", "删除人设"]:
+    for prefix in ["添加管理员", "删除管理员", "风格", "清除风格", "切换模型", "人设信息", "切换人设", "绑定人设", "创建人设", "删除人设"]:
         if raw.startswith(prefix + " "):
             return "/" + raw
     return None

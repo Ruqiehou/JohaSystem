@@ -32,8 +32,6 @@ REQUIRED_IMPORTS = {
     "openai": "openai",
     "yaml": "pyyaml",
     "websockets": "websockets",
-    "aiohttp": "aiohttp",
-    "aiofiles": "aiofiles",
     "dotenv": "python-dotenv",
     "watchdog": "watchdog",
 }

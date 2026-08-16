@@ -4,7 +4,7 @@ Joha - 智能聊天机器人框架 v1.0.0
 模块化架构：
   core/        — 编排入口（服务、消息处理、命令处理、运行时上下文）
   ai/          — AI 驱动（客户端、生成器、Provider、Bot、分类器）
-  decision/    — 决策大脑（回复概率、冷却、群状态、知识库、工具调用）
+  decision/    — 决策大脑（回复概率、冷却、群状态、工具调用）
   managers/    — 数据管理（历史、画像、风格、人设、权限）
   config/      — 基础设施（配置、日志、缓存）
 """
@@ -39,8 +39,8 @@ from .decision import (
     cooldown_manager,
 )
 
-# 版本信息
-__version__ = "1.0.0"
+# 版本信息（与 adapter.__version__ 保持一致的统一版本号）
+__version__ = "3.6.0"
 __author__ = "Joha Team"
 
 # 导出主要类和函数

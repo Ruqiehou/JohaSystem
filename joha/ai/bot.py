@@ -1,6 +1,6 @@
 """
 通用 AI 聊天引擎模块
-支持任意 OpenAI 兼容 API，支持工具调用（搜索、网页抓取、知识库查询）
+支持任意 OpenAI 兼容 API，支持工具调用（搜索、网页抓取）
 使用统一的 AI 客户端架构
 """
 from typing import List, Dict, Optional
