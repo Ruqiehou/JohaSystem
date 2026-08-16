@@ -125,7 +125,7 @@ def check_files(report: SetupReport) -> None:
     if ROOT_CONFIG_FILE.exists():
         report.add_ok("根目录 config.yaml 存在")
     else:
-        report.add_warn("根目录 config.yaml 不存在；当前启动主要使用 adapter/connection.yaml")
+        report.add_warn("根目录 config.yaml 不存在；当前启动主要使用 joha/adapter/connection.yaml")
 
 
 def check_dirs(report: SetupReport, fix: bool) -> None:
@@ -274,7 +274,7 @@ def print_steps() -> None:
         "1. 安装 Python 3.10 或更高版本，并确认命令行可执行 python。",
         "2. 在项目根目录执行：python -m pip install -r requirements.txt",
         "3. 如需网页截图功能，执行：python -m playwright install chromium",
-        "4. 编辑 adapter/connection.yaml：填写 bot_uin、napcat.ws_url、napcat.access_token，并确认端口与 NapCat 一致。",
+        "4. 编辑 joha/adapter/connection.yaml：填写 bot_uin、napcat.ws_url、napcat.access_token，并确认端口与 NapCat 一致。",
         "5. 编辑 joha/config/config.json：设置 chat-llm.active_provider，并确保对应 provider 的 api_key、base_url、model 完整。",
         "6. 启动 NapCat，并确保 WebSocket 服务已开启。",
         "7. 回到项目根目录执行：python setup.py --check，确认没有 [ERR]。",

@@ -5,7 +5,7 @@
 <details>
 <summary><b>Q: Joha 是什么？</b></summary>
 
-Joha（约哈）是一个基于 LLM 的智能群聊机器人框架，支持多模型切换、智能回复决策、风格学习、知识库检索等功能。它通过 WebSocket 连接 NapCatQQ 消息平台，自动监听群消息并智能回复。
+Joha（约哈）是一个基于 LLM 的智能群聊机器人框架，支持多模型切换、智能回复决策、风格学习、人设管理等功能。它通过 WebSocket 连接 NapCatQQ 消息平台，自动监听群消息并智能回复。
 </details>
 
 <details>
@@ -29,10 +29,10 @@ Joha（约哈）是一个基于 LLM 的智能群聊机器人框架，支持多�
 <summary><b>Q: 机器人的决策逻辑是什么？</b></summary>
 
 Joha 采用基于概率计算的智能决策引擎。核心流程：
-1. 收集反馈信号（被@、被回复、提问等）
-2. 计算各因子得分（反馈权重 + 群动态 + 内容质量 + 意图）
+1. 收集反馈信号（被@、被回复、提问、提及昵称等）
+2. 计算各因子得分（反馈权重 + 群动态 + 内容长度 + 垃圾检测 + 意图）
 3. Logit 累加 + Sigmoid 归一化得到回复概率 [0, 1]
-4. 与配置的阈值比较，决定是否回复
+4. 与动态阈值（根据群活跃度/认可率调整）比较，决定是否回复
 </details>
 
 ---
@@ -44,8 +44,8 @@ Joha 采用基于概率计算的智能决策引擎。核心流程：
 
 按以下顺序排查：
 1. 发送 `/模式` 检查是否处于被动模式
-2. 降低 `reply_decision.json` 中的 `thresholds.group`（如降到 0.45）
-3. 检查 config.json 中 API Key 是否正确
+2. 降低 `joha/config/reply_decision.json` 中的 `thresholds.group`（如降到 0.45）
+3. 检查 `joha/config/config.json` 中 API Key 是否正确
 4. 查看 `storage/johalog/ai.log` 日志
 5. 确认 NapCatQQ 正常在线
 </details>
@@ -55,7 +55,7 @@ Joha 采用基于概率计算的智能决策引擎。核心流程：
 
 1. 调高阈值：`thresholds.group` 调到 0.75
 2. 切换到被动模式：`/全局关闭`
-3. 增大冷却时间
+3. 增大冷却间隔（`joha/decision/cooldown.py` 中 `min_interval`）
 4. 启用消息队列合并
 </details>
 
@@ -67,6 +67,8 @@ Joha 采用基于概率计算的智能决策引擎。核心流程：
 ```
 
 新增的管理员会拥有命令执行权限。查看当前管理员列表：`/管理员列表`。
+
+也可以在 `joha/config/config.json` 的 `admin.admins` 数组中直接配置。
 </details>
 
 <details>
@@ -77,19 +79,22 @@ Joha 采用基于概率计算的智能决策引擎。核心流程：
 /切换模型 <名称>   # 切换到指定模型（如 /切换模型 deepseek）
 /当前模型      # 查看当前使用的模型
 ```
+
+在 `joha/config/config.json` 的 `llm.providers` 数组中配置多个 Provider。
 </details>
 
 <details>
 <summary><b>Q: 配置文件中的环境变量怎么用？</b></summary>
 
-所有 `JOHA_` 前缀的环境变量会自动覆盖 JSON 配置中的对应项。例如：
+适配层（`joha/adapter/`）支持 `.env` 文件（位于 `joha/adapter/.env`）或系统环境变量，用于连接配置：
 
 ```bash
-export JOHA_LLM_ACTIVE_PROVIDER=deepseek
-export JOHA_SETTINGS_DEBUG=false
+export NAPCAT_WS_URL=ws://127.0.0.1:3002
+export NAPCAT_ACCESS_TOKEN=xxx
+export LOG_LEVEL=INFO
 ```
 
-这允许在不修改配置文件的情况下改变机器人行为，适合 Docker 部署等场景。
+主配置 `config.json`（LLM、admin 等）当前直接读文件，不走环境变量覆盖。
 </details>
 
 ---
@@ -157,32 +162,6 @@ pip install -r requirements.txt
 
 ---
 
-## 知识库
-
-<details>
-<summary><b>Q: 知识库是做什么的？</b></summary>
-
-知识库是 Joha 的本地 RAG（检索增强生成）引擎。当你添加了相关知识后，机器人在回复时能自动检索相关内容作为参考，使回答更准确、更专业。例如添加群规、FAQ、技术文档等。
-</details>
-
-<details>
-<summary><b>Q: 如何添加知识条目？</b></summary>
-
-```
-/知识库添加 问题|答案
-```
-
-例如：`/知识库添加 本群主题是什么？|本群是 Joha 机器人的技术交流群`
-</details>
-
-<details>
-<summary><b>Q: 知识库数据存在哪里？</b></summary>
-
-存在 `storage/txt/` 目录下的分片 JSON 文件中（`knowledge_0001.json` 等），每片 100 条。建议定期备份此目录。
-</details>
-
----
-
 ## 人设与风格
 
 <details>
@@ -194,7 +173,19 @@ pip install -r requirements.txt
 - **社交行为**：热情度、礼貌度、好奇心、共情力、耐心值（0-10）
 - **语言特征**：表情符号、网络用语、语气词等
 
-发送 `/人设` 查看详细参数。
+发送 `/人设` 查看稳定性报告，`/人设信息` 查看人设参数详情。
+</details>
+
+<details>
+<summary><b>Q: 如何创建/切换人设？</b></summary>
+
+```
+/人设列表              # 查看所有人设
+/创建人设 名称|显示名|描述  # 创建新人设
+/切换人设 名称          # 切换全局活跃人设
+/绑定人设 [群号] 名称    # 为群绑定人设
+/删除人设 名称          # 删除人设（不可删除默认人设）
+```
 </details>
 
 <details>
@@ -227,20 +218,14 @@ NapCatQQ 是一个 QQ 机器人框架。如果你是 QQ 群聊场景，必须使
 
 1. 确认 NapCatQQ 已启动
 2. 确认 NapCatQQ 配置中开启了 WebSocket（端口 3002）
-3. 确认 `connection.yaml` 中的 `ws_url` 与 NapCatQQ 的 websocket 地址一致
+3. 确认 `joha/adapter/connection.yaml` 中的 `ws_url` 与 NapCatQQ 的 websocket 地址一致
 4. 检查防火墙是否阻止了本地连接
 </details>
 
 <details>
 <summary><b>Q: API Key 放哪里最安全？</b></summary>
 
-推荐使用环境变量方式：
-
-```bash
-export JOHA_LLM_PROVIDERS_0_API_KEY=sk-your-key
-```
-
-这样密钥不会出现在配置文件中，更安全。特别是在 Docker 或 CI/CD 环境中。
+`joha/config/config.json` 中的 `api_key` 字段。注意该文件已在 `.gitignore` 中，不会被提交到仓库。生产环境也可通过环境变量管理密钥，避免密钥出现在明文配置中。
 </details>
 
 <details>
@@ -252,11 +237,11 @@ export JOHA_LLM_PROVIDERS_0_API_KEY=sk-your-key
 <details>
 <summary><b>Q: Python 版本要求是什么？</b></summary>
 
-需要 Python 3.9 及以上版本。推荐使用 Python 3.11+。
+需要 Python 3.10 及以上版本。推荐使用 Python 3.11+。
 </details>
 
 <details>
 <summary><b>Q: 需要付费吗？</b></summary>
 
-Johahat 框架本身是开源免费的（MIT 协议）。但使用的 LLM API 通常需要付费（按 token 计费），各 Provider 价格不同。
+Joha 框架本身是开源免费的（MIT 协议）。但使用的 LLM API 通常需要付费（按 token 计费），各 Provider 价格不同。
 </details>

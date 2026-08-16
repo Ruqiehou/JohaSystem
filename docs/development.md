@@ -4,7 +4,7 @@
 
 ### 1.1 前置要求
 
-- Python >= 3.9
+- Python >= 3.10
 - 运行中的 NapCatQQ（WebSocket 端口开放）
 - Git
 
@@ -28,7 +28,7 @@ cp joha/config/config.example.json joha/config/config.json
 
 # 5. 编辑配置文件
 #    joha/config/config.json      — 填入 API Key
-#    adapter/connection.yaml       — 填入 WebSocket 地址和 QQ 号
+#    joha/adapter/connection.yaml — 填入 WebSocket 地址和 QQ 号
 
 # 6. 确保 NapCatQQ 已启动，然后运行
 python run.py
@@ -44,19 +44,16 @@ JohaChat/
 ├── requirements.txt                # Python 依赖
 ├── CHANGELOG.md                    # 更新日志
 │
-├── adapter/                        # NapCat 适配层（独立包）
-│   ├── kernel/                     # 连接层：WebSocket、API、事件
-│   ├── config.py                   # 配置管理
-│   ├── connection.yaml             # 连接配置
-│   └── message_client.py           # 封装层：事件注册与路由
-│
 ├── storage/                        # 运行时数据（自动创建）
 │   ├── history/                    # 聊天历史
+│   ├── conversations/              # 群对话记忆
+│   ├── memory/                     # 群长期记忆
 │   ├── styles/                     # 风格学习
 │   ├── personas/                   # 人设数据
 │   └── johalog/                    # 运行日志
 │
 ├── joha/                           # 核心代码包
+│   ├── adapter/                    # NapCat 适配层（transport/protocol/core）
 │   ├── core/                       # 编排入口层（扁平）
 │   ├── ai/                         # AI 驱动层
 │   ├── decision/                   # 决策大脑层
@@ -64,6 +61,7 @@ JohaChat/
 │   ├── tools/                      # 工具层
 │   └── config/                     # 配置与基础设施（扁平）
 │
+├── tests/                          # 单元测试
 ├── docs/                           # 文档目录
 └── README.md                       # 项目说明
 ```
@@ -87,19 +85,17 @@ async def handle_weather(cmd_args: str, event, api) -> str:
     return weather_info
 ```
 
-在命令路由表中注册：
+在 `CommandHandler.handle_command()` 中注册分支：
 
 ```python
-COMMAND_HANDLERS = {
-    # ... 已有命令
-    "/天气": handle_weather,
-}
+elif cmd == "/天气" and len(parts) >= 2:
+    response = await handle_weather(parts[1], msg_group_id, bot_api)
 ```
 
-添加自然语言别名（可选），编辑 `joha/decision/command_analyzer.py`：
+添加自然语言别名（可选），编辑 `joha/core/commands.py` 的 `FALLBACK_COMMAND_ALIASES`：
 
 ```python
-COMMAND_ALIASES = {
+FALLBACK_COMMAND_ALIASES = {
     # ... 已有别名
     "天气": "/天气",
     "查天气": "/天气",
@@ -110,21 +106,39 @@ COMMAND_ALIASES = {
 
 ## 4. 添加新工具
 
-工具系统支持自动发现。
+工具系统支持自动发现，两种风格任选。
 
-创建 `joha/tools/weather.py`：
+### 4.1 函数 + 元信息风格（推荐，供 ToolRegistry 自动发现）
+
+创建 `joha/tools/weather/tool.py`：
 
 ```python
 """天气查询工具"""
-from typing import Optional
 
-TOOL_NAME = "weather"
-TOOL_DESCRIPTION = "查询指定城市的天气信息"
+TOOL_META = {
+    "name": "weather",
+    "description": "查询指定城市的天气信息",
+    "parameters": {
+        "city": {"type": "str", "required": True, "description": "城市名"},
+    },
+    "aliases": ["天气"],
+}
 
 async def execute(city: str) -> str:
     """执行天气查询"""
-    # 实现天气 API 调用
     return f"{city}今天晴，25°C"
+```
+
+### 4.2 类风格
+
+创建 `joha/tools/weather/core.py`：
+
+```python
+"""天气查询工具（类风格）"""
+
+class WeatherTool:
+    def query(self, city: str) -> str:
+        return f"{city}今天晴，25°C"
 ```
 
 ---
@@ -133,7 +147,7 @@ async def execute(city: str) -> str:
 
 ### 5.1 连接配置
 
-`adapter/connection.yaml`：
+`joha/adapter/connection.yaml`：
 
 ```yaml
 napcat:
@@ -142,10 +156,15 @@ napcat:
   bot_uin: "你的机器人QQ号"
 ```
 
-可在 `run.py` 中覆盖：
+可在 `run.py` 的 `RUN_CONNECT_CONFIG` 中覆盖：
 
 ```python
-WS_URL = "ws://127.0.0.1:3002"  # 覆盖 YAML 配置
+RUN_CONNECT_CONFIG = {
+    "ws_url": "ws://127.0.0.1:3002",  # 覆盖 YAML 配置
+    "access_token": "",
+    "bot_uin": "1234567890",
+    "debug": True,
+}
 ```
 
 ### 5.2 机器人配置
@@ -154,11 +173,20 @@ WS_URL = "ws://127.0.0.1:3002"  # 覆盖 YAML 配置
 
 ```json
 {
-  "ai": {
-    "providers": [...]
+  "llm": {
+    "active_provider": "deepseek",
+    "providers": [
+      {
+        "name": "deepseek",
+        "role": "chat",
+        "api_key": "sk-xxx",
+        "base_url": "https://api.deepseek.com/v1",
+        "model": "deepseek-v4-flash",
+        "default": true
+      }
+    ]
   },
-  "bot": {
-    "mode": "passive",
+  "admin": {
     "admins": ["你的QQ号"]
   }
 }
@@ -186,10 +214,17 @@ ai_logger.info("AI 相关日志")         # AI 专用
 
 ## 7. 测试
 
-### 7.1 测试 WebSocket 连接
+### 7.1 运行测试
+
+```bash
+python -m pytest tests -q       # 全部测试
+python tests/run.py             # unittest 运行器
+```
+
+### 7.2 测试 WebSocket 连接
 
 ```python
-from adapter import MessageClient
+from joha.adapter import MessageClient
 
 client = MessageClient(
     ws_url="ws://127.0.0.1:3002",
@@ -203,14 +238,19 @@ async def handle(event):
 client.start(debug=True)
 ```
 
-### 7.2 测试 LLM 调用
+### 7.3 测试 LLM 调用
 
 ```python
-from joha.ai.bot import ChatEngine
+from joha.ai.generator import generator
+import asyncio
 
-engine = ChatEngine()
-response = engine.chat("你好，请介绍一下自己")
-print(response)
+async def test():
+    response = await generator.chat(
+        messages=[{"role": "user", "content": "你好，请介绍一下自己"}],
+    )
+    print(response)
+
+asyncio.run(test())
 ```
 
 ---
@@ -225,4 +265,11 @@ from joha.core.hot_reload import hot_reloader
 hot_reloader.start()
 # 修改 joha/ 下的 .py 文件会自动重载
 hot_reloader.stop()
+```
+
+也可以在 `joha/adapter/connection.yaml` 中开启：
+
+```yaml
+settings:
+  hot_reload: true
 ```

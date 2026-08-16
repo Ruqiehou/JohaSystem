@@ -7,7 +7,7 @@
 | 项目 | 最低要求 | 推荐配置 |
 |------|----------|----------|
 | 操作系统 | Windows / Linux / macOS | Linux (Ubuntu 20.04+) |
-| Python | >= 3.9 | >= 3.11 |
+| Python | >= 3.10 | >= 3.11 |
 | 内存 | 1 GB | 2 GB+ |
 | 磁盘 | 500 MB | 2 GB+ |
 | 网络 | 需访问 LLM API 端点 | 稳定的公网连接 |
@@ -15,7 +15,7 @@
 ### 1.2 前置软件
 
 - **NapCatQQ**: 需在机器上运行 NapCatQQ 实例，并开启 WebSocket 正向连接
-- **Python**: 确保 `python3 --version` >= 3.9
+- **Python**: 确保 `python3 --version` >= 3.10
 - **pip**: 用于安装依赖包
 
 ---
@@ -46,7 +46,7 @@ pip install -r requirements.txt
 # 主配置（复制示例文件）
 cp joha/config/config.example.json joha/config/config.json
 
-# adapter/connection.yaml 已存在，直接编辑即可
+# joha/adapter/connection.yaml 已存在，直接编辑即可
 ```
 
 ### 3.2 编辑 connection.yaml
@@ -60,6 +60,7 @@ napcat:
 
 settings:
   debug: true                            # 首次运行建议开启
+  hot_reload: false                      # 生产环境建议关闭
 
 logging:
   level: INFO                            # DEBUG/INFO/WARNING/ERROR
@@ -76,6 +77,7 @@ logging:
       {
         "name": "deepseek",
         "label": "深度求索",
+        "role": "chat",
         "api_key": "sk-你的密钥",
         "base_url": "https://api.deepseek.com/v1",
         "model": "deepseek-v4-flash",
@@ -194,7 +196,7 @@ Get-Content storage/johalog/ai.log -Wait
 
 ```python
 # 检查机器人是否在线
-from adapter import MessageClient
+from joha.adapter import MessageClient
 
 # 如果 MessageClient 正常运行且 WebSocket 连接正常，机器人即在线
 ```
@@ -210,6 +212,8 @@ from adapter import MessageClient
 | `storage/styles/` | 风格学习数据 | 高 |
 | `storage/personas/` | 人设数据 | 高 |
 | `storage/history/` | 聊天历史 | 中 |
+| `storage/conversations/` | 群对话记忆 | 中 |
+| `storage/memory/` | 群长期记忆 | 中 |
 | `storage/user_profiles.json` | 用户画像 | 中 |
 | `storage/group_modes.json` | 群组模式 | 低 |
 | `joha/config/config.json` | 配置文件 | 高 |
@@ -224,7 +228,10 @@ BACKUP_DIR="./backups/$(date +%Y%m%d_%H%M%S)"
 mkdir -p "$BACKUP_DIR"
 
 cp -r storage/styles "$BACKUP_DIR/"
-cp -r storage/txt "$BACKUP_DIR/"
+cp -r storage/personas "$BACKUP_DIR/"
+cp -r storage/history "$BACKUP_DIR/"
+cp -r storage/conversations "$BACKUP_DIR/"
+cp -r storage/memory "$BACKUP_DIR/"
 cp joha/config/config.json "$BACKUP_DIR/"
 cp storage/user_profiles.json "$BACKUP_DIR/"
 
@@ -278,7 +285,7 @@ diff joha/config/config.example.json joha/config/config.json
 ## 9. 安全建议
 
 1. **不要提交密钥**: 确保 `config.json` 和 `connection.yaml` 在 `.gitignore` 中
-2. **使用环境变量**: 敏感信息可通过 `JOHA_*` 环境变量覆盖
+2. **使用环境变量**: 适配层敏感信息可通过 `.env` 或环境变量覆盖（`NAPCAT_WS_URL` 等）
 3. **限制管理员**: 管理员 QQ 号应控制在最小范围
 4. **定期更换密钥**: LLM API Key 定期更换
 5. **日志清理**: 定期清理 `storage/johalog/` 中的旧日志文件
@@ -289,14 +296,7 @@ diff joha/config/config.example.json joha/config/config.json
 
 ### 10.1 冷却时间调优
 
-如果 API 调用频繁，可增大冷却时间：
-
-```json
-// reply_decision.json 中（如存在 cooldown 配置）
-{
-  "cooldown_seconds": 5  // 增大值减少调用频率
-}
-```
+如果 API 调用频繁，可增大冷却间隔（`joha/decision/cooldown.py` 中 `min_interval` 参数，默认 2 秒），或调整 `reply_decision.json` 中 `length_bonuses.rate_limit_score`（默认 -3.0，越负限制越强）。
 
 ### 10.2 消息队列优化
 

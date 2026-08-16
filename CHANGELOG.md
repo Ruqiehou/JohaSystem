@@ -2,6 +2,28 @@
 
 所有重要版本变更记录。
 
+## v3.7.0 (2026-08-16)
+
+### 结构修正（以代码为准）
+
+- **adapter 迁回 `joha/` 下**: `adapter/` 由项目根目录迁回 `joha/adapter/`（传输层 transport / 协议层 protocol / 兼容导出层 core 的三层结构不变），所有导入路径统一为 `from joha.adapter import ...`
+- **连接配置**: `connection.yaml` 路径为 `joha/adapter/connection.yaml`
+- **新增测试**: 完整单元测试套件（group_conversation / history_manager / message_builder / message_queue / service），运行方式 `python -m pytest tests -q`
+
+### 功能更新（2026-06 之后累积）
+
+- **群聊双层记忆**: 新增 `managers/group_conversation.py`（短时群对话记忆，`storage/conversations/`）与 `managers/group_memory.py`（长期记忆，`storage/memory/`）
+- **消息队列增强**: 过期消息定期清理（`message_queue_manager.process_expired()`）
+- **多模态与存储**: 优化图片处理，存储操作增加线程安全保护
+- **决策层重构**: 合并 `reply_config` 职责到 `reply_decision`；意图识别改为纯规则分类；决策引擎 `process()` 统一入口（`EngineResult` 输出）
+- **人设系统**: 支持多人设管理（`/人设列表`、`/切换人设`、`/创建人设`、`/绑定人设`、`/删除人设`）
+
+### 文档同步
+
+- README / docs 全部按当前代码结构更新（adapter 路径、存储目录、命令表、API 参考等）
+
+---
+
 ## v3.6.0 (2026-06-19)
 
 ### Adapter 传输层 / 协议层拆分

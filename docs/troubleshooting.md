@@ -30,12 +30,12 @@ cat joha/config/reply_decision.json | grep -A 5 thresholds
 ```json
 {
   "thresholds": {
-    "group": 0.45    // 从 0.55 调低到 0.45
+    "group": 0.45
   }
 }
 ```
 
-然后发送 `/知识库刷新` 热加载。
+修改后通过 `reply_cfg.reload()` 热加载（代码内调用），或重启机器人。
 
 **步骤 3：检查 LLM 配置**
 
@@ -68,7 +68,7 @@ grep -i "connect\|websocket\|error" storage/johalog/ai.log
 确认：
 - NapCatQQ 是否在运行
 - WebSocket 端口（默认 3002）是否开放
-- `connection.yaml` 中的 `ws_url` 是否正确
+- `joha/adapter/connection.yaml` 中的 `ws_url` 是否正确
 
 **步骤 5：检查冷却状态**
 
@@ -88,13 +88,13 @@ grep -i "connect\|websocket\|error" storage/johalog/ai.log
 
 1. **上下文窗口溢出**：历史消息过多导致 LLM 丢失上下文
 2. **人设参数异常**：人设配置被意外修改
-3. **知识库干扰**：RAG 检索到不相关的知识
+3. **风格学习数据异常**：学到的异常风格干扰回复
 
 **解决方式：**
 
 ```bash
-/人设          # 检查人设参数
-/知识库统计    # 检查知识库状态
+/人设          # 检查人设稳定性报告
+/人设信息      # 查看人设参数详情
 /清除风格 <ID> # 清理异常的风格学习数据
 ```
 
@@ -112,10 +112,10 @@ grep -i "connect\|websocket\|error" storage/johalog/ai.log
 ```json
 {
   "thresholds": {
-    "group": 0.75          // 提高阈值
+    "group": 0.75
   },
   "feedback_weights": {
-    "at_bot": 2.5,         // 保持高权重确保@时回复
+    "at_bot": 2.5,
     "command": 3.0
   }
 }
@@ -123,7 +123,7 @@ grep -i "connect\|websocket\|error" storage/johalog/ai.log
 
 ### 2.3 回复内容被截断
 
-检查 LLM 的 `max_tokens` 配置（在 `config.json` 中）。
+检查 LLM 的 `max_tokens` 配置（`joha/ai/generator.py` 中 `generator.chat()` 的 `max_tokens` 参数，默认 1024）。
 
 ---
 
@@ -133,7 +133,7 @@ grep -i "connect\|websocket\|error" storage/johalog/ai.log
 
 **步骤 1：确认命令格式**
 
-Joha 的命令必须以 `/` 开头，如 `/帮助`、`/模式`。
+Joha 的命令必须以 `/` 开头，如 `/帮助`、`/模式`。也支持自然语言别名（如"帮助"、"模型列表"）。
 
 **步骤 2：检查权限**
 
@@ -145,6 +145,7 @@ Joha 的命令必须以 `/` 开头，如 `/帮助`、`/模式`。
 - `/全局启动`、`/全局关闭`
 - `/添加管理员`、`/删除管理员`
 - `/切换模型`
+- 人设管理类命令
 
 **步骤 3：查看日志**
 
@@ -182,8 +183,9 @@ netstat -an | findstr 3002    # Windows
 | NapCatQQ 未启动 | 启动 NapCatQQ |
 | 端口不正确 | 检查 NapCatQQ 配置中的 WebSocket 端口 |
 | 防火墙阻止 | 放行对应端口或使用 127.0.0.1 |
-| JSON 解析错误 | 检查 `connection.yaml` 格式 |
+| YAML 解析错误 | 检查 `joha/adapter/connection.yaml` 格式 |
 | `access_token` 不匹配 | 留空或填写正确 Token |
+| `bot_uin` 与 NapCat 登录账号不一致 | 修改 `run.py` 或 connection.yaml 中的 `bot_uin` |
 
 ### 4.2 连接频繁断开
 
@@ -194,7 +196,6 @@ netstat -an | findstr 3002    # Windows
 
 **解决方式：**
 - MessageClient 内置自动重连机制
-- 启动参数中可设置重连策略
 - 使用 systemd/supervisor 守护进程
 
 ---
@@ -214,18 +215,21 @@ netstat -an | findstr 3002    # Windows
 ### 5.2 调试 API 调用
 
 ```python
-from joha.ai.clients import AIClient
+from joha.ai.clients import create_client_from_provider
+from joha.ai.providers import provider_manager
 import asyncio
 
 async def test_api():
-    client = AIClient(
-        api_key="sk-your-key",
-        base_url="https://api.deepseek.com/v1",
-    )
+    provider = provider_manager.get_default("chat")
+    if not provider:
+        print("未配置 LLM Provider")
+        return
+    client = create_client_from_provider(provider, client_type="chat", enable_tools=False)
     try:
-        resp = await client.chat_completion(
-            model="deepseek-v4-flash",
+        resp = await client.call_with_context(
             messages=[{"role": "user", "content": "你好"}],
+            temperature=0.7,
+            max_tokens=100,
         )
         print(resp)
     except Exception as e:
@@ -242,8 +246,8 @@ asyncio.run(test_api())
 
 **排查：**
 
-1. 知识库是否过大（检查 `storage/txt/` 下的文件数量和大小）
-2. 历史记录是否过多（清理 `storage/history/`）
+1. 历史记录是否过多（检查 `storage/history/` 下的文件数量和大小）
+2. 群对话记忆 / 长期记忆是否过大（`storage/conversations/`、`storage/memory/`）
 3. 系统资源是否充足（CPU、内存）
 
 **解决：**
@@ -251,9 +255,6 @@ asyncio.run(test_api())
 ```bash
 # 清理旧历史记录
 rm -rf storage/history/old_*.json   # 谨慎操作
-
-# 优化知识库
-# 删除不必要的知识库分片
 ```
 
 ### 6.2 内存占用过高
@@ -286,20 +287,18 @@ cp joha/config/config.example.json joha/config/config.json
 # 然后重新填写 API Key 和管理员信息
 ```
 
-### 7.2 恢复知识库
+### 7.2 恢复群组模式 / 冷却数据
 
-如果分片文件损坏，可以尝试手动修复：
+这些数据为 JSON 文件，损坏时可直接删除让系统重建：
 
 ```bash
-# 1. 备份当前数据
-cp -r storage/txt storage/txt.backup
-
-# 2. 逐个检查分片文件
-ls -la storage/txt/knowledge_*.json
-
-# 3. 移除损坏的分片
-# rm storage/txt/knowledge_0003.json  # 谨慎操作
+# 群组模式 / 冷却状态 / 用户画像
+rm storage/group_modes.json
+rm storage/cooldown.json
+rm storage/user_profiles.json
 ```
+
+> 删除后对应功能会自动重新初始化，不会导致崩溃。
 
 ---
 
@@ -310,11 +309,12 @@ ls -la storage/txt/knowledge_*.json
 | 关键词 | 含义 |
 |------|------|
 | `[connect]` | WebSocket 连接状态 |
-| `[message]` | 消息收发记录 |
-| `[decision]` | 决策引擎计算过程 |
-| `[llm]` | LLM API 调用记录 |
-| `[error]` | 错误信息 |
-| `[command]` | 命令处理记录 |
+| `[消息]` | 消息收发记录 |
+| `[决策]` | 决策引擎计算过程 |
+| `[AI]` | LLM API 调用记录 |
+| `[Generator]` | 回复生成记录 |
+| `[ToolRegistry]` | 工具注册状态 |
+| `error` | 错误信息 |
 
 ### 8.2 快速诊断命令
 
@@ -323,7 +323,7 @@ ls -la storage/txt/knowledge_*.json
 grep "error\|ERROR" storage/johalog/ai.log | tail -50
 
 # 查看 API 调用延迟
-grep "llm\|API" storage/johalog/ai.log | tail -20
+grep "AI\|API" storage/johalog/ai.log | tail -20
 
 # 查看命令执行历史
 grep "command\|命令" storage/johalog/ai.log | tail -20
