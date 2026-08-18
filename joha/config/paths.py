@@ -7,8 +7,8 @@ import os
 # 项目根目录（joha/ 的上一级）
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# 数据存储根目录（项目根目录下 storage/）
-STORAGE_ROOT = os.path.join(PROJECT_ROOT, "storage")
+# 数据存储根目录（项目根目录下 johadata/）
+STORAGE_ROOT = os.path.join(PROJECT_ROOT, "johadata")
 
 # 各子目录
 HISTORY_DIR = os.path.join(STORAGE_ROOT, "history")
