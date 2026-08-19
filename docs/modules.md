@@ -183,12 +183,12 @@ Joha 的核心大脑，决定是否回复消息。
 
 ### group_state.py
 - **职责**: 群活跃度追踪、消息频率统计、认可率
-- **持久化**: `storage/group_states.json`
+- **持久化**: `johadata/group_states.json`
 
 ### cooldown.py
 - **类**: `CooldownManager`
 - **职责**: 防刷屏，限制短时间连续回复（群级 + 用户级）
-- **持久化**: `storage/cooldown.json`
+- **持久化**: `johadata/cooldown.json`
 
 ---
 
@@ -198,27 +198,27 @@ Joha 的核心大脑，决定是否回复消息。
 
 ### personas.py
 - **职责**: 多维度人设参数管理、多人设增删改查、群绑定
-- **存储**: `storage/personas/`
+- **存储**: `johadata/personas/`
 
 ### style_learner.py
 - **职责**: 自动学习群成员说话风格
-- **存储**: `storage/styles/`
+- **存储**: `johadata/styles/`
 
 ### history_manager.py
 - **职责**: 聊天记录的增删查（只存用户消息，不含回复）
-- **存储**: `storage/history/`
+- **存储**: `johadata/history/`
 
 ### group_conversation.py
 - **职责**: 群对话记忆（短时上下文，按群分文件）
-- **存储**: `storage/conversations/group_{group_id}.json`
+- **存储**: `johadata/conversations/group_{group_id}.json`
 
 ### group_memory.py
 - **职责**: 群长期记忆（跨会话总结）
-- **存储**: `storage/memory/group_{group_id}.json`
+- **存储**: `johadata/memory/group_{group_id}.json`
 
 ### user_profile.py
 - **职责**: 用户画像持久化
-- **存储**: `storage/user_profiles.json`
+- **存储**: `johadata/user_profiles.json`
 
 ### admin.py
 - **类**: `AdminManager`（单例）
@@ -231,15 +231,43 @@ Joha 的核心大脑，决定是否回复消息。
 
 路径: `joha/tools/`
 
-模块化工具，每个工具独立封装，支持类风格和新式函数+元信息风格。
+每个工具独立目录，采用 **MCP 风格 JSON 描述符 + Python 实现** 分离架构：
+
+```
+joha/tools/<tool_name>/
+├── tool.json    ← MCP 风格接口描述（name, description, arguments JSON Schema）
+├── tool.py      ← execute() 函数 + TOOL_META（向后兼容）
+└── core.py      ← 核心实现逻辑
+```
+
+| 组件 | 路径 | 职责 |
+|------|------|------|
+| `ToolRegistry` | `joha.core.tool_registry` | 中台：自动发现、注册、call_tool/list_tools/dispatch |
+| `tool.json` | `joha/tools/<name>/tool.json` | MCP 风格 JSON 描述符（参数校验用） |
+| `tool.py` | `joha/tools/<name>/tool.py` | `execute()` 函数，被 ToolRegistry 调度 |
+| `core.py` | `joha/tools/<name>/core.py` | 真实实现（搜索、抓取等） |
+
+### 工具调度流程
+
+```
+用户发 /search Python
+  → commands.py 识别 /search
+  → tool_registry.call_tool("search", {"query": "Python"})
+  → 加载 joha/tools/search/tool.json 校验参数
+  → 调用 search/tool.py 的 execute(query="Python")
+  → search/core.py 的 SearchTool.do_search()
+  → 返回结果文本
+```
 
 ### search/
-- **职责**: 网络搜索工具
-- **类**: `SearchTool`；**新式**: `TOOL_META` + `execute()`
+- **tool.json**: 参数 query (str, required), num_results (int, default=5)
+- **exec**: `SearchTool.do_search()` — DuckDuckGo / Google / Bing + AI 总结
+- **命令**: `/search <query>`, `/s <query>`, `/web_search <query>`
 
 ### webpage/
-- **职责**: 网页内容抓取
-- **类**: `WebpageTool`；**新式**: `TOOL_META` + `execute()`
+- **tool.json**: 参数 url (str, required)
+- **exec**: `WebpageTool.fetch()` — URL 验证 + 内容提取
+- **命令**: `/webpage <url>`, `/wp <url>`, `/fetch <url>`
 
 ---
 
@@ -257,7 +285,7 @@ Joha 的核心大脑，决定是否回复消息。
 ### group_mode_config.py
 - **类**: `GroupModeConfig`
 - **职责**: 逐群的 active/passive 模式管理
-- **持久化**: `storage/group_modes.json`
+- **持久化**: `johadata/group_modes.json`
 
 ### logger.py
 - **职责**: 多级别日志、文件轮转、预定义记录器
@@ -269,4 +297,4 @@ Joha 的核心大脑，决定是否回复消息。
 
 ### paths.py
 - **职责**: 存储路径集中定义（`STORAGE_ROOT`、`HISTORY_DIR` 等）
-- **运行时**: 自动创建 `storage/` 及其子目录
+- **运行时**: 自动创建 `johadata/` 及其子目录（路径集中定义于 `joha.config.paths.STORAGE_ROOT`）

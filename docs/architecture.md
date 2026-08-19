@@ -24,6 +24,37 @@ Joha 采用**分层 + 事件驱动**的架构设计，从上到下分为：
 └─────────────────────────────────────────────┘
 ```
 
+### 工具调度流程
+
+用户消息流经 适配层 → 编排层 时，斜杠命令被 commands.py 截获并路由至 ToolRegistry：
+
+```
+用户: /search Python
+  → MessageHandler 提取文本
+  → CommandHandler 识别 /search
+  → tool_registry.call_tool("search", {"query": "Python"})
+      ├─ 加载 joha/tools/search/tool.json 校验参数
+      ├─ 调用 search/tool.py: execute(query="Python")
+      └─ 返回结果 → 发送到群
+```
+
+### MCP 风格调用（AI 自主调用）
+
+```python
+from joha.core.tool_registry import tool_registry
+
+tool_registry.auto_discover()
+
+# 命名参数调用（参数按 JSON Schema 自动校验）
+result = tool_registry.call_tool("search", {
+    "query": "今天天气",
+    "num_results": 3
+})
+
+# 获取所有工具的 MCP schema
+tools_schema = tool_registry.list_tools()
+```
+
 ---
 
 ## 2. 各层职责
@@ -112,12 +143,16 @@ Joha 的核心亮点，负责判断机器人在什么场景下应该回复。
 
 ### 2.6 工具层 (joha.tools)
 
-模块化工具，每个工具独立封装，支持类风格与新式函数+元信息风格。
+每个工具独立目录，采用 **MCP 风格 JSON 描述符 + Python 实现** 分离架构。
 
 | 模块 | 文件 | 职责 |
 |------|------|------|
-| 网络搜索 | `search/` | 可配置搜索 API |
-| 网页抓取 | `webpage/` | 网页内容抓取与解析 |
+| ToolRegistry 中台 | `joha.core.tool_registry` | 自动发现 JSON 描述符、Python 实现双注册；提供 MCP 风格 `call_tool()` / `list_tools()` 接口 |
+| `tool.json` | `joha/tools/<name>/tool.json` | MCP JSON Schema 描述符（接口定义 + 参数校验） |
+| `tool.py` | `joha/tools/<name>/tool.py` | `execute()` 函数（ToolRegistry 调度入口） |
+| `core.py` | `joha/tools/<name>/core.py` | 真实实现 |
+| 网络搜索 | `search/` | DuckDuckGo / Google / Bing + AI 总结 |
+| 网页抓取 | `webpage/` | URL 验证 + 内容抓取与清理 |
 
 ### 2.7 基础设施 (joha.config)
 
@@ -161,12 +196,12 @@ NapCatQQ ──WebSocket──→ NapCatClient (传输层)
 
 ---
 
-## 4. 存储结构
+## 4. 存储结构（johadata/）
 
-数据存储在项目根目录 `storage/`，运行时自动创建：
+数据存储从 v1.2+ 改为 `johadata/` 目录（由 `joha.config.paths.STORAGE_ROOT` 集中定义），运行时自动创建：
 
 ```
-storage/
+johadata/
 ├── group_states.json       # 群组状态持久化
 ├── group_modes.json        # 群组模式配置
 ├── user_profiles.json      # 用户画像数据

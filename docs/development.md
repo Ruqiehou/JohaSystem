@@ -44,7 +44,7 @@ JohaChat/
 ├── requirements.txt                # Python 依赖
 ├── CHANGELOG.md                    # 更新日志
 │
-├── storage/                        # 运行时数据（自动创建）
+├── johadata/                        # 运行时数据（自动创建）
 │   ├── history/                    # 聊天历史
 │   ├── conversations/              # 群对话记忆
 │   ├── memory/                     # 群长期记忆
@@ -106,40 +106,66 @@ FALLBACK_COMMAND_ALIASES = {
 
 ## 4. 添加新工具
 
-工具系统支持自动发现，两种风格任选。
+工具系统使用 MCP 风格的 JSON 描述符 + Python 实现分离架构，ToolRegistry 自动发现。
 
-### 4.1 函数 + 元信息风格（推荐，供 ToolRegistry 自动发现）
+### 步骤
 
-创建 `joha/tools/weather/tool.py`：
+1. 在 `joha/tools/` 下新建目录（如 `weather/`）
+2. 创建 `tool.json`（MCP 风格接口描述）：
+   ```json
+   {
+     "name": "weather",
+     "description": "查询指定城市的天气",
+     "aliases": ["天气", "w"],
+     "arguments": {
+       "type": "object",
+       "properties": {
+         "city": {
+           "type": "string",
+           "description": "城市名",
+           "examples": ["北京", "上海"]
+         }
+       },
+       "required": ["city"]
+     }
+   }
+   ```
+3. 创建 `tool.py`，导出 `execute()` 和 `TOOL_META`（向后兼容）：
+   ```python
+   """天气查询工具"""
+
+   TOOL_META = {
+       "name": "weather",
+       "description": "查询指定城市的天气",
+       "parameters": {
+           "city": {"type": "str", "required": True, "description": "城市名"},
+       },
+       "aliases": ["天气", "w"],
+   }
+
+   async def execute(city: str) -> str:
+       return f"{city}今天晴，25°C"
+   ```
+4. 可选：创建 `core.py` 放真实实现，`tool.py` 调用它
+5. 重启 Bot，ToolRegistry 自动发现
+6. 用户直接发 `/weather 北京` 或 `/天气 北京` 即可使用
+
+### 旧式类风格（仍兼容）
 
 ```python
-"""天气查询工具"""
-
-TOOL_META = {
-    "name": "weather",
-    "description": "查询指定城市的天气信息",
-    "parameters": {
-        "city": {"type": "str", "required": True, "description": "城市名"},
-    },
-    "aliases": ["天气"],
-}
-
-async def execute(city: str) -> str:
-    """执行天气查询"""
-    return f"{city}今天晴，25°C"
-```
-
-### 4.2 类风格
-
-创建 `joha/tools/weather/core.py`：
-
-```python
-"""天气查询工具（类风格）"""
-
+# joha/tools/weather/core.py
 class WeatherTool:
     def query(self, city: str) -> str:
         return f"{city}今天晴，25°C"
 ```
+
+### 两者关系
+
+| 文件 | 是否必需 | 说明 |
+|------|---------|------|
+| `tool.json` | 推荐 | MCP 描述符（接口定义 + 参数校验） |
+| `tool.py` | 推荐 | `execute()` 函数（ToolRegistry 核心调度入口） |
+| `core.py` | 可选 | 真实实现，被 `tool.py` 调用 |
 
 ---
 
@@ -208,7 +234,7 @@ johalog_logger.info("详细日志")       # 仅文件
 ai_logger.info("AI 相关日志")         # AI 专用
 ```
 
-日志文件位于 `storage/johalog/`，按日期分文件。
+日志文件位于 `johadata/johalog/`，按日期分文件。
 
 ---
 

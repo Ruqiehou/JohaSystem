@@ -59,10 +59,10 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \
 
 ```bash
 # 查看日志
-tail -f storage/johalog/ai.log
+tail -f johadata/johalog/ai.log
 
 # 查找连接状态
-grep -i "connect\|websocket\|error" storage/johalog/ai.log
+grep -i "connect\|websocket\|error" johadata/johalog/ai.log
 ```
 
 确认：
@@ -150,7 +150,7 @@ Joha 的命令必须以 `/` 开头，如 `/帮助`、`/模式`。也支持自然
 **步骤 3：查看日志**
 
 ```bash
-tail -f storage/johalog/ai.log | grep -i "command\|命令"
+tail -f johadata/johalog/ai.log | grep -i "command\|命令"
 ```
 
 ---
@@ -246,15 +246,15 @@ asyncio.run(test_api())
 
 **排查：**
 
-1. 历史记录是否过多（检查 `storage/history/` 下的文件数量和大小）
-2. 群对话记忆 / 长期记忆是否过大（`storage/conversations/`、`storage/memory/`）
+1. 历史记录是否过多（检查 `johadata/history/` 下的文件数量和大小）
+2. 群对话记忆 / 长期记忆是否过大（`johadata/conversations/`、`johadata/memory/`）
 3. 系统资源是否充足（CPU、内存）
 
 **解决：**
 
 ```bash
 # 清理旧历史记录
-rm -rf storage/history/old_*.json   # 谨慎操作
+rm -rf johadata/history/old_*.json   # 谨慎操作
 ```
 
 ### 6.2 内存占用过高
@@ -293,9 +293,9 @@ cp joha/config/config.example.json joha/config/config.json
 
 ```bash
 # 群组模式 / 冷却状态 / 用户画像
-rm storage/group_modes.json
-rm storage/cooldown.json
-rm storage/user_profiles.json
+rm johadata/group_modes.json
+rm johadata/cooldown.json
+rm johadata/user_profiles.json
 ```
 
 > 删除后对应功能会自动重新初始化，不会导致崩溃。
@@ -320,11 +320,11 @@ rm storage/user_profiles.json
 
 ```bash
 # 最近 50 条错误
-grep "error\|ERROR" storage/johalog/ai.log | tail -50
+grep "error\|ERROR" johadata/johalog/ai.log | tail -50
 
 # 查看 API 调用延迟
-grep "AI\|API" storage/johalog/ai.log | tail -20
+grep "AI\|API" johadata/johalog/ai.log | tail -20
 
 # 查看命令执行历史
-grep "command\|命令" storage/johalog/ai.log | tail -20
+grep "command\|命令" johadata/johalog/ai.log | tail -20
 ```

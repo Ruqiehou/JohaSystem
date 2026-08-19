@@ -46,7 +46,7 @@ Joha 采用基于概率计算的智能决策引擎。核心流程：
 1. 发送 `/模式` 检查是否处于被动模式
 2. 降低 `joha/config/reply_decision.json` 中的 `thresholds.group`（如降到 0.45）
 3. 检查 `joha/config/config.json` 中 API Key 是否正确
-4. 查看 `storage/johalog/ai.log` 日志
+4. 查看 `johadata/johalog/ai.log` 日志
 5. 确认 NapCatQQ 正常在线
 </details>
 
@@ -104,15 +104,15 @@ export LOG_LEVEL=INFO
 <details>
 <summary><b>Q: 如何查看运行日志？</b></summary>
 
-日志文件位于 `storage/johalog/ai.log`。
+日志文件位于 `johadata/johalog/ai.log`。
 
 实时查看：
 ```bash
-# Linux/macOS
-tail -f storage/johalog/ai.log
+# Linux/macOS  
+tail -f johadata/johalog/ai.log
 
 # Windows PowerShell
-Get-Content storage/johalog/ai.log -Wait
+Get-Content johadata/johalog/ai.log -Wait
 ```
 </details>
 

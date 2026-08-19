@@ -495,7 +495,63 @@ print(runtime_context.bot_uin)
 
 ---
 
-## 16. 其他常用模块
+## 16. ToolRegistry
+
+路径: `joha.core.tool_registry.ToolRegistry`
+
+工具注册表中台，实现 MCP 风格的自动发现、注册和调度。
+
+```python
+from joha.core.tool_registry import tool_registry, get_tool_registry
+
+# 自动发现
+tool_registry.auto_discover()
+
+# MCP 风格调用（命名参数）
+result = tool_registry.call_tool("search", {"query": "Python", "num_results": 2})
+
+# 传统风格调用（字符串参数）
+result = tool_registry.dispatch("search", "Python")
+
+# 获取所有工具的 MCP schema 列表
+tools = tool_registry.list_tools()
+```
+
+### 方法
+
+| 方法 | 签名 | 说明 |
+|------|------|------|
+| `auto_discover()` | `() -> int` | 扫描 `tools/` 目录，自动发现 JSON 描述符 + Python 实现 |
+| `call_tool()` | `(name: str, arguments: dict | None) -> Any` | MCP 风格调用，参数 JSON Schema 校验 |
+| `list_tools()` | `() -> list[dict]` | 输出所有工具的 MCP schema 列表（name, description, arguments） |
+| `dispatch()` | `(cmd: str, args: str) -> str | None` | 传统字符串参数风格调度 |
+| `get_tool_descriptions()` | `() -> str` | 生成 AI system prompt 工具描述 |
+| `get_help_text()` | `() -> str` | 生成用户帮助文本 |
+| `has_tool()` | `(name_or_alias: str) -> bool` | 检查工具是否已注册 |
+| `get_tool_names()` | `() -> list[str]` | 返回所有工具名列表 |
+
+### MCP 工具输出格式 (`list_tools()`)
+
+```json
+[
+  {
+    "name": "search",
+    "description": "Search the internet for real-time information...",
+    "arguments": {
+      "type": "object",
+      "properties": {
+        "query": {"type": "string", "description": "..."},
+        "num_results": {"type": "integer", "description": "...", "default": 5}
+      },
+      "required": ["query"]
+    }
+  }
+]
+```
+
+---
+
+## 17. 其他常用模块
 
 | 模块 | 路径 | 说明 |
 |------|------|------|
@@ -506,5 +562,4 @@ print(runtime_context.bot_uin)
 | GroupConversation | `joha.managers.group_conversation` | 群对话记忆（`group_conversation`） |
 | GroupMemory | `joha.managers.group_memory` | 群长期记忆（`group_memory_manager`） |
 | GroupState | `joha.decision.group_state` | 群组状态追踪（`group_state_manager`） |
-| ToolRegistry | `joha.core.tool_registry` | 工具注册表（`tool_registry` / `get_tool_registry()`） |
 | SearchTool / WebpageTool | `joha.tools` | 搜索与网页抓取工具 |

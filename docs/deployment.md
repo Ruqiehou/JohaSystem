@@ -177,11 +177,11 @@ sudo systemctl status joha
 ### 6.1 查看实时日志
 
 ```bash
-# Linux/macOS
-tail -f storage/johalog/ai.log
+# Linux/macOS  
+tail -f johadata/johalog/ai.log
 
 # Windows PowerShell
-Get-Content storage/johalog/ai.log -Wait
+Get-Content johadata/johalog/ai.log -Wait
 ```
 
 ### 6.2 在群内监控
@@ -209,13 +209,13 @@ from joha.adapter import MessageClient
 
 | 路径 | 内容 | 重要程度 |
 |------|------|----------|
-| `storage/styles/` | 风格学习数据 | 高 |
-| `storage/personas/` | 人设数据 | 高 |
-| `storage/history/` | 聊天历史 | 中 |
-| `storage/conversations/` | 群对话记忆 | 中 |
-| `storage/memory/` | 群长期记忆 | 中 |
-| `storage/user_profiles.json` | 用户画像 | 中 |
-| `storage/group_modes.json` | 群组模式 | 低 |
+| `johadata/styles/` | 风格学习数据 | 高 |
+| `johadata/personas/` | 人设数据 | 高 |
+| `johadata/history/` | 聊天历史 | 中 |
+| `johadata/conversations/` | 群对话记忆 | 中 |
+| `johadata/memory/` | 群长期记忆 | 中 |
+| `johadata/user_profiles.json` | 用户画像 | 中 |
+| `johadata/group_modes.json` | 群组模式 | 低 |
 | `joha/config/config.json` | 配置文件 | 高 |
 
 ### 7.2 备份脚本（Linux）
@@ -227,13 +227,13 @@ from joha.adapter import MessageClient
 BACKUP_DIR="./backups/$(date +%Y%m%d_%H%M%S)"
 mkdir -p "$BACKUP_DIR"
 
-cp -r storage/styles "$BACKUP_DIR/"
-cp -r storage/personas "$BACKUP_DIR/"
-cp -r storage/history "$BACKUP_DIR/"
-cp -r storage/conversations "$BACKUP_DIR/"
-cp -r storage/memory "$BACKUP_DIR/"
+cp -r johadata/styles "$BACKUP_DIR/"
+cp -r johadata/personas "$BACKUP_DIR/"
+cp -r johadata/history "$BACKUP_DIR/"
+cp -r johadata/conversations "$BACKUP_DIR/"
+cp -r johadata/memory "$BACKUP_DIR/"
 cp joha/config/config.json "$BACKUP_DIR/"
-cp storage/user_profiles.json "$BACKUP_DIR/"
+cp johadata/user_profiles.json "$BACKUP_DIR/"
 
 echo "备份完成: $BACKUP_DIR"
 ```
@@ -288,7 +288,7 @@ diff joha/config/config.example.json joha/config/config.json
 2. **使用环境变量**: 适配层敏感信息可通过 `.env` 或环境变量覆盖（`NAPCAT_WS_URL` 等）
 3. **限制管理员**: 管理员 QQ 号应控制在最小范围
 4. **定期更换密钥**: LLM API Key 定期更换
-5. **日志清理**: 定期清理 `storage/johalog/` 中的旧日志文件
+5. **日志清理**: 定期清理 `johadata/johalog/` 中的旧日志文件
 
 ---
 
