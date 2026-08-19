@@ -1,11 +1,16 @@
 """
 Tool Registry 中台
 统一工具管理中台，实现工具的自动发现、注册和调用
-参考 SKILL 系统设计，支持插件化架构
+参考 MCP (Model Context Protocol) 设计，支持 JSON descriptor + Python 实现分离
+
+架构：
+  - JSON 描述符文件（tool.json）定义工具的接口（name, description, arguments schema）
+  - Python 实现文件（tool.py）提供 execute() 函数
+  - ToolRegistry 自动发现并绑定两者
 """
 import os
-import importlib
-import inspect
+import json
+import importlib.util
 import traceback
 from typing import Dict, List, Optional, Callable, Any
 
@@ -16,20 +21,101 @@ from joha.config.logger import tprint
 DEFAULT_TOOLS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "tools")
 
 
+def _load_json_descriptor(json_path: str) -> Optional[dict]:
+    """加载 JSON 工具描述符文件"""
+    try:
+        with open(json_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        tprint("warning", f"[ToolRegistry] 加载 JSON 描述符失败 {json_path}: {e}")
+        return None
+
+
+def _normalize_meta_from_json(json_data: dict) -> dict:
+    """将 MCP 风格的 JSON 描述符转换为内部统一的 TOOL_META 格式
+
+    JSON 输入格式（arguments 为 JSON Schema）：
+      {
+        "name": "search",
+        "description": "...",
+        "aliases": ["s"],
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "query": {"type": "string", "description": "...", "default": 5},
+            "num_results": {"type": "integer", "description": "..."}
+          },
+          "required": ["query"]
+        }
+      }
+
+    内部格式（parameters 为 dict）：
+      {
+        "name": "search",
+        "description": "...",
+        "aliases": ["s"],
+        "parameters": {
+          "query": {"type": "str", "required": True, "description": "..."},
+          "num_results": {"type": "int", "required": False, "description": "..."}
+        }
+      }
+    """
+    meta = {
+        "name": json_data.get("name", ""),
+        "description": json_data.get("description", ""),
+        "aliases": json_data.get("aliases", []),
+        "parameters": {},
+    }
+
+    arguments = json_data.get("arguments", {})
+    properties = arguments.get("properties", {})
+    required = set(arguments.get("required", []))
+
+    for pname, pinfo in properties.items():
+        js_type = pinfo.get("type", "string")
+        # 将 JSON Schema type 映射到内部 type
+        type_map = {
+            "string": "str",
+            "integer": "int",
+            "number": "float",
+            "boolean": "bool",
+            "array": "list",
+            "object": "dict",
+        }
+        meta["parameters"][pname] = {
+            "type": type_map.get(js_type, js_type),
+            "description": pinfo.get("description", ""),
+            "required": pname in required,
+        }
+        # 携带默认值
+        if "default" in pinfo:
+            meta["parameters"][pname]["default"] = pinfo["default"]
+
+    return meta
+
+
 class ToolRegistry:
     """工具注册表中台
-    自动发现 tools/ 目录下的工具，统一注册、调度和描述生成
+    自动发现 tools/ 目录下的工具（支持 JSON + Python 双模式），统一注册、调度和描述生成
     """
 
     def __init__(self, tools_dir: str = ""):
         self.tools_dir = tools_dir or DEFAULT_TOOLS_DIR
-        self._tools: Dict[str, dict] = {}  # name -> {meta, execute, file}
+        self._tools: Dict[str, dict] = {}   # name -> {meta, execute, file}
         self._aliases: Dict[str, str] = {}  # alias -> name
         self._initialized = False
 
+    # ----------------------------------------------------------------
+    # 自动发现
+    # ----------------------------------------------------------------
+
     def auto_discover(self) -> int:
         """自动扫描 tools/ 目录，加载符合规范的工具
-        返回发现的工具数量
+
+        发现策略：
+          1. 扫描 tools/<name>/tool.json — 加载接口描述
+          2. 扫描 tools/<name>/tool.py   — 加载 execute() 实现
+         两者可以独立存在，同时存在时 JSON 定义接口、Python 提供实现
         """
         if self._initialized:
             return len(self._tools)
@@ -41,75 +127,62 @@ class ToolRegistry:
             return 0
 
         count = 0
-        # 1. 新格式：扫描子目录 tools/<name>/tool.py
+
         for subdir in sorted(os.listdir(tools_dir)):
             subdir_path = os.path.join(tools_dir, subdir)
             if not os.path.isdir(subdir_path) or subdir.startswith("_"):
                 continue
 
-            tool_file = os.path.join(subdir_path, "tool.py")
-            if not os.path.isfile(tool_file):
-                continue
+            json_file = os.path.join(subdir_path, "tool.json")
+            py_file = os.path.join(subdir_path, "tool.py")
 
-            try:
-                spec = importlib.util.spec_from_file_location(
-                    f"joha.tools.{subdir}.tool", tool_file
-                )
-                if spec is None or spec.loader is None:
-                    continue
+            # 1. 加载 JSON 描述符（MCP 风格）
+            meta = None
+            if os.path.isfile(json_file):
+                json_data = _load_json_descriptor(json_file)
+                if json_data:
+                    meta = _normalize_meta_from_json(json_data)
+                    tprint("info", f"[ToolRegistry] 发现 JSON 描述符: {json_file}")
 
-                module = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(module)
-
-                meta = getattr(module, "TOOL_META", None)
-                execute_fn = getattr(module, "execute", None)
-
-                if meta and execute_fn and callable(execute_fn):
-                    self._register_from_meta(meta, execute_fn, tool_file)
-                    count += 1
-                    tprint("info", f"[ToolRegistry] 发现工具: {meta['name']} ({tool_file})")
-            except Exception as e:
-                tprint("warning", f"[ToolRegistry] 加载工具失败 {subdir}: {e}")
-                traceback.print_exc()
-
-        # 2. 旧格式兼容：扫描顶层 *_tool.py 或 *.py（过渡期）
-        for filename in sorted(os.listdir(tools_dir)):
-            if not filename.endswith(".py") or filename.startswith("_"):
-                continue
-
-            filepath = os.path.join(tools_dir, filename)
-            if os.path.isdir(filepath):
-                continue
-
-            module_name = filename[:-3]
-            if filename.endswith("_tool.py"):
-                # 旧格式 *_tool.py 文件
+            # 2. 加载 Python 实现
+            execute_fn = None
+            py_path = None
+            if os.path.isfile(py_file):
                 try:
                     spec = importlib.util.spec_from_file_location(
-                        f"joha.tools.{module_name}", filepath
+                        f"joha.tools.{subdir}.tool", py_file
                     )
-                    if spec is None or spec.loader is None:
-                        continue
+                    if spec and spec.loader:
+                        module = importlib.util.module_from_spec(spec)
+                        spec.loader.exec_module(module)
+                        execute_fn = getattr(module, "execute", None)
 
-                    module = importlib.util.module_from_spec(spec)
-                    spec.loader.exec_module(module)
+                        # 如果没有 JSON，从 Python 的 TOOL_META 读取
+                        if meta is None:
+                            py_meta = getattr(module, "TOOL_META", None)
+                            if py_meta:
+                                meta = py_meta
 
-                    meta = getattr(module, "TOOL_META", None)
-                    execute_fn = getattr(module, "execute", None)
-
-                    if meta and execute_fn and callable(execute_fn):
-                        self._register_from_meta(meta, execute_fn, filepath)
-                        count += 1
-                        tprint("info", f"[ToolRegistry] 发现工具(旧格式): {meta['name']} ({filepath})")
+                        py_path = py_file
                 except Exception as e:
-                    tprint("warning", f"[ToolRegistry] 加载工具失败 {filename}: {e}")
+                    tprint("warning", f"[ToolRegistry] 加载 Python 实现失败 {py_file}: {e}")
                     traceback.print_exc()
+
+            # 3. 注册（只要有 meta 或 execute_fn 之一即可）
+            if meta and execute_fn and callable(execute_fn):
+                self._register(meta, execute_fn, py_path or json_file)
+                count += 1
+                tprint("info", f"[ToolRegistry] ✅ 工具注册: {meta['name']}")
+            elif meta and not execute_fn:
+                tprint("warning", f"[ToolRegistry] ⚠️ 工具 '{meta.get('name')}' 缺少 execute() 实现")
+            elif execute_fn and not meta:
+                tprint("warning", f"[ToolRegistry] ⚠️ 工具 '{subdir}' 缺少接口描述 (tool.json 或 TOOL_META)")
 
         tprint("info", f"[ToolRegistry] 自动发现完成，共 {count} 个工具")
         return count
 
-    def _register_from_meta(self, meta: dict, execute_fn: Callable, filepath: str):
-        """从 TOOL_META 注册工具"""
+    def _register(self, meta: dict, execute_fn: Callable, filepath: str):
+        """注册工具到内部字典"""
         name = meta.get("name", "")
         if not name:
             return
@@ -120,7 +193,6 @@ class ToolRegistry:
             "file": filepath,
         }
 
-        # 注册别名
         for alias in meta.get("aliases", []):
             self._aliases[alias] = name
 
@@ -132,16 +204,71 @@ class ToolRegistry:
         filepath: str = "",
     ) -> None:
         """手动注册工具"""
-        self._tools[name] = {
-            "meta": meta,
-            "execute": execute_fn,
-            "file": filepath,
-        }
-        for alias in meta.get("aliases", []):
-            self._aliases[alias] = name
+        self._register(meta, execute_fn, filepath)
+
+    # ----------------------------------------------------------------
+    # 工具调用 - MCP 风格
+    # ----------------------------------------------------------------
+
+    def call_tool(self, name: str, arguments: dict = None) -> Any:
+        """MCP 风格的工具调用
+
+        Args:
+            name: 工具名（或别名）
+            arguments: 参数字典，如 {"query": "天气", "num_results": 3}
+
+        Returns:
+            工具执行结果
+
+        Raises:
+            KeyError: 工具未找到
+            TypeError: 参数不匹配
+            RuntimeError: 执行失败
+        """
+        raw = name.lstrip("/").strip().lower()
+        tool_name = self._aliases.get(raw) or raw
+        tool = self._tools.get(tool_name)
+
+        if not tool:
+            raise KeyError(f"工具 '{name}' 未找到")
+
+        meta = tool["meta"]
+        execute_fn = tool["execute"]
+        params = meta.get("parameters", {})
+        args = arguments or {}
+
+        try:
+            # 构造 kwargs：按参数名匹配
+            kwargs = {}
+            for pname, pinfo in params.items():
+                if pname in args:
+                    val = args[pname]
+                    # 类型转换
+                    expected_type = pinfo.get("type", "str")
+                    if expected_type == "int":
+                        val = int(val) if val is not None else 0
+                    elif expected_type == "float":
+                        val = float(val) if val is not None else 0.0
+                    kwargs[pname] = val
+                elif pinfo.get("required", False):
+                    raise TypeError(f"缺少必需参数: {pname}")
+                elif "default" in pinfo:
+                    kwargs[pname] = pinfo["default"]
+
+            result = execute_fn(**kwargs)
+            return result
+
+        except (KeyError, TypeError, RuntimeError):
+            raise
+        except Exception as e:
+            raise RuntimeError(f"工具 '{tool_name}' 执行失败: {e}")
+
+    # ----------------------------------------------------------------
+    # 工具调用 - 传统风格（字符串参数）
+    # ----------------------------------------------------------------
 
     def dispatch(self, cmd: str, args: str = "") -> Optional[str]:
-        """调度工具调用
+        """传统风格的工具调度（字符串参数解析）
 
         Args:
             cmd: 命令名（如 'search'）或别名（如 's'）
@@ -150,10 +277,7 @@ class ToolRegistry:
         Returns:
             工具执行结果，或 None 表示未找到工具
         """
-        # 去掉 '/' 前缀
         raw_cmd = cmd.lstrip("/").strip().lower()
-
-        # 查找工具名
         tool_name = self._aliases.get(raw_cmd) or raw_cmd
         tool = self._tools.get(tool_name)
 
@@ -165,40 +289,26 @@ class ToolRegistry:
         params = meta.get("parameters", {})
 
         try:
-            # 解析参数
             if not params:
-                # 无参数工具
                 result = execute_fn()
             elif len(params) == 1:
-                # 单参数工具：直接传 args
-                first_param_name = list(params.keys())[0]
                 result = execute_fn(args.strip())
             else:
-                # 多参数工具：尝试按空格分割
                 arg_parts = args.strip().split(None, len(params) - 1)
                 kwargs = {}
                 for i, (pname, pinfo) in enumerate(params.items()):
-                    if pinfo.get("required", False):
-                        if i < len(arg_parts):
-                            val = arg_parts[i]
-                            # 类型转换
-                            if pinfo.get("type") == "int":
-                                try:
-                                    val = int(val)
-                                except ValueError:
-                                    pass
-                            kwargs[pname] = val
-                        else:
-                            kwargs[pname] = ""
-                    else:
-                        if i < len(arg_parts):
-                            val = arg_parts[i]
-                            if pinfo.get("type") == "int":
-                                try:
-                                    val = int(val)
-                                except ValueError:
-                                    pass
-                            kwargs[pname] = val
+                    if i < len(arg_parts):
+                        val = arg_parts[i]
+                        if pinfo.get("type") == "int":
+                            try:
+                                val = int(val)
+                            except ValueError:
+                                pass
+                        kwargs[pname] = val
+                    elif pinfo.get("required", False):
+                        kwargs[pname] = ""
+                    elif "default" in pinfo:
+                        kwargs[pname] = pinfo["default"]
                 result = execute_fn(**kwargs)
 
             return str(result) if result is not None else ""
@@ -206,6 +316,10 @@ class ToolRegistry:
         except Exception as e:
             tprint("error", f"[ToolRegistry] 工具 '{tool_name}' 执行失败: {e}")
             return f"工具执行失败: {str(e)}"
+
+    # ----------------------------------------------------------------
+    # 查询
+    # ----------------------------------------------------------------
 
     def get_tool(self, name: str) -> Optional[dict]:
         """获取工具信息"""
@@ -233,7 +347,6 @@ class ToolRegistry:
             params = meta.get("parameters", {})
             examples = meta.get("examples", [])
 
-            # 构建参数说明
             param_desc = " ".join(
                 f"[{pname}]" if params[pname].get("required") else f"({pname})"
                 for pname in params
@@ -272,6 +385,66 @@ class ToolRegistry:
             lines.append(f"    {desc}")
 
         return "\n".join(lines)
+
+    # ----------------------------------------------------------------
+    # MCP 兼容：输出所有工具的 JSON Schema 列表
+    # ----------------------------------------------------------------
+
+    def list_tools(self) -> List[dict]:
+        """以 MCP tools 列表格式输出所有注册的工具
+
+        返回格式：
+          [
+            {
+              "name": "search",
+              "description": "...",
+              "arguments": {
+                "type": "object",
+                "properties": {...},
+                "required": [...]
+              }
+            },
+            ...
+          ]
+        """
+        tools = []
+        for name, tool in sorted(self._tools.items()):
+            meta = tool["meta"]
+            params = meta.get("parameters", {})
+
+            properties = {}
+            required = []
+            for pname, pinfo in params.items():
+                # 内部 type -> JSON Schema type
+                type_map = {
+                    "str": "string",
+                    "int": "integer",
+                    "float": "number",
+                    "bool": "boolean",
+                    "list": "array",
+                    "dict": "object",
+                }
+                prop = {
+                    "type": type_map.get(pinfo.get("type", "str"), "string"),
+                    "description": pinfo.get("description", ""),
+                }
+                if "default" in pinfo:
+                    prop["default"] = pinfo["default"]
+                properties[pname] = prop
+                if pinfo.get("required", False):
+                    required.append(pname)
+
+            tools.append({
+                "name": name,
+                "description": meta.get("description", ""),
+                "arguments": {
+                    "type": "object",
+                    "properties": properties,
+                    "required": required,
+                },
+            })
+
+        return tools
 
 
 # 全局单例

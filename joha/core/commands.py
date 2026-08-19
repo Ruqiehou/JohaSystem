@@ -299,6 +299,34 @@ class CommandHandler:
             style_learner.clear_user_style(target_user)
             response = f"已清除用户 {target_user} 的风格数据"
 
+        # ── 工具命令（所有人可用）──
+        elif cmd in ["/tools", "/工具列表"]:
+            from joha.core.tool_registry import tool_registry
+            if not tool_registry._initialized:
+                tool_registry.auto_discover()
+            tools_desc = tool_registry.get_help_text()
+            response = "🛠 可用工具：\n" + ("\n".join(tools_desc.split("\n")[1:]) if "\n" in tools_desc else tools_desc)
+        
+        elif cmd in ["/search", "/s", "/web_search"]:
+            from joha.core.tool_registry import tool_registry
+            if not tool_registry._initialized:
+                tool_registry.auto_discover()
+            query = parts[1] if len(parts) >= 2 else ""
+            if not query:
+                response = "用法：/search <搜索关键词>"
+            else:
+                response = tool_registry.dispatch("search", query)
+
+        elif cmd in ["/webpage", "/wp", "/fetch"]:
+            from joha.core.tool_registry import tool_registry
+            if not tool_registry._initialized:
+                tool_registry.auto_discover()
+            url = parts[1] if len(parts) >= 2 else ""
+            if not url:
+                response = "用法：/webpage <URL>"
+            else:
+                response = tool_registry.dispatch("webpage", url)
+
         # ── 多人设管理 ──
         elif cmd in ["/人设列表", "/personas"]:
             response = list_personas()

@@ -1,0 +1,21 @@
+{
+  "name": "search",
+  "description": "Search the internet for real-time information, news, weather, encyclopedia, etc. Supports DuckDuckGo, Google, and Bing backends.",
+  "aliases": ["s", "web_search"],
+  "arguments": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string",
+        "description": "Search keywords",
+        "examples": ["today's weather", "Python tutorial"]
+      },
+      "num_results": {
+        "type": "integer",
+        "description": "Number of results to return, default 5",
+        "default": 5
+      }
+    },
+    "required": ["query"]
+  }
+}

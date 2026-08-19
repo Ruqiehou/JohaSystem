@@ -1,0 +1,82 @@
+2026-08-16 22:16:20 - terminal - INFO - [Generator] 已加载 AI 客户端 | 默认 | 模型: 
+2026-08-16 22:16:21 - terminal - WARNING - [ToolRegistry] 工具目录不存在: C:\Users\ASUS\Desktop\JohaChat\tools
+2026-08-16 22:16:21 - terminal - INFO - [消息队列] 已初始化，合并窗口: 120.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-08-16 22:16:37 - terminal - INFO - [消息队列] 已初始化，合并窗口: 1.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-08-16 22:16:37 - terminal - INFO - [消息合并] 群g1 | 合并2条消息 (0.0秒) | 内容: a b
+2026-08-16 22:16:37 - terminal - INFO - [消息队列] 已初始化，合并窗口: 60.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-08-16 22:16:37 - terminal - INFO - [消息合并] 群g1 | 合并3条消息 (0.0秒) | 内容: m0 m1 m2
+2026-08-16 22:16:37 - terminal - INFO - [消息合并] 群g1 | 合并1条消息 (0.0秒) | 内容: m3
+2026-08-16 22:16:38 - terminal - INFO - [消息队列] 已初始化，合并窗口: 60.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-08-16 22:16:38 - terminal - INFO - [消息合并] 群g1 | 合并2条消息 (0.0秒) | 内容: dup
+2026-08-16 22:16:38 - terminal - INFO - [消息队列] 已初始化，合并窗口: 0.1秒, 最大队列大小: 5, 最小合并数: 2
+2026-08-16 22:16:38 - terminal - INFO - [消息合并] 群g1 | 合并2条消息 (0.2秒) | 内容: alone trigger
+2026-08-16 22:16:38 - terminal - INFO - [AI] 请求中... | 用户u_svc_gen | 消息: test
+2026-08-16 22:16:38 - terminal - WARNING - [AI] 未生成回复，已跳过发送到群 | 用户u_svc_gen | 消息: test
+2026-08-16 22:16:38 - terminal - WARNING - [多模态] 模型  不支持图片，已跳过 1 张图片
+2026-08-16 22:16:59 - terminal - INFO - [Generator] 已加载 AI 客户端 | 默认 | 模型: 
+2026-08-16 22:17:00 - terminal - WARNING - [ToolRegistry] 工具目录不存在: C:\Users\ASUS\Desktop\JohaChat\tools
+2026-08-16 22:17:00 - terminal - INFO - [消息队列] 已初始化，合并窗口: 120.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-08-16 22:17:01 - terminal - INFO - [Generator] 已加载 AI 客户端 | 默认 | 模型: 
+2026-08-16 22:17:01 - terminal - WARNING - [ToolRegistry] 工具目录不存在: C:\Users\ASUS\Desktop\JohaChat\tools
+2026-08-16 22:17:01 - terminal - INFO - [消息队列] 已初始化，合并窗口: 120.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-08-16 22:18:34 - terminal - INFO - [Generator] 已加载 AI 客户端 | 默认 | 模型: 
+2026-08-16 22:18:34 - terminal - WARNING - [ToolRegistry] 工具目录不存在: C:\Users\ASUS\Desktop\JohaChat\tools
+2026-08-16 22:18:34 - terminal - INFO - [消息队列] 已初始化，合并窗口: 120.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-08-16 22:18:58 - terminal - INFO - [Generator] 已加载 AI 客户端 | 默认 | 模型: 
+2026-08-16 22:18:59 - terminal - WARNING - [ToolRegistry] 工具目录不存在: C:\Users\ASUS\Desktop\JohaChat\tools
+2026-08-16 22:18:59 - terminal - INFO - [消息队列] 已初始化，合并窗口: 120.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-08-16 22:28:55 - terminal - INFO - [Generator] 已加载 AI 客户端 | 默认 | 模型: 
+2026-08-16 22:28:57 - terminal - WARNING - [ToolRegistry] 工具目录不存在: C:\Users\ASUS\Desktop\JohaChat\tools
+2026-08-16 22:28:57 - terminal - INFO - [消息队列] 已初始化，合并窗口: 120.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-08-16 22:29:12 - terminal - INFO - [消息队列] 已初始化，合并窗口: 1.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-08-16 22:29:12 - terminal - INFO - [消息合并] 群g1 | 合并2条消息 (0.0秒) | 内容: a b
+2026-08-16 22:29:12 - terminal - INFO - [消息队列] 已初始化，合并窗口: 60.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-08-16 22:29:12 - terminal - INFO - [消息合并] 群g1 | 合并3条消息 (0.0秒) | 内容: m0 m1 m2
+2026-08-16 22:29:12 - terminal - INFO - [消息合并] 群g1 | 合并1条消息 (0.0秒) | 内容: m3
+2026-08-16 22:29:12 - terminal - INFO - [消息队列] 已初始化，合并窗口: 60.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-08-16 22:29:12 - terminal - INFO - [消息合并] 群g1 | 合并2条消息 (0.0秒) | 内容: dup
+2026-08-16 22:29:12 - terminal - INFO - [消息队列] 已初始化，合并窗口: 0.1秒, 最大队列大小: 5, 最小合并数: 2
+2026-08-16 22:29:12 - terminal - INFO - [消息合并] 群g1 | 合并2条消息 (0.2秒) | 内容: alone trigger
+2026-08-16 22:29:12 - terminal - INFO - [AI] 请求中... | 用户u_svc_gen | 消息: test
+2026-08-16 22:29:12 - terminal - WARNING - [AI] 未生成回复，已跳过发送到群 | 用户u_svc_gen | 消息: test
+2026-08-16 22:29:13 - terminal - WARNING - [多模态] 模型  不支持图片，已跳过 1 张图片
+2026-08-16 22:52:53 - terminal - INFO - [Generator] 已加载 AI 客户端 | 默认 | 模型: 
+2026-08-16 22:52:53 - terminal - INFO - [ToolRegistry] 发现工具: search (C:\Users\ASUS\Desktop\JohaChat\joha\tools\search\tool.py)
+2026-08-16 22:52:53 - terminal - INFO - [ToolRegistry] 发现工具: webpage (C:\Users\ASUS\Desktop\JohaChat\joha\tools\webpage\tool.py)
+2026-08-16 22:52:53 - terminal - INFO - [ToolRegistry] 自动发现完成，共 2 个工具
+2026-08-16 22:52:53 - terminal - INFO - [消息队列] 已初始化，合并窗口: 120.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-08-16 22:54:33 - terminal - INFO - [Generator] 已加载 AI 客户端 | 默认 | 模型: 
+2026-08-16 22:54:33 - terminal - INFO - [ToolRegistry] 发现工具: search (C:\Users\ASUS\Desktop\JohaChat\joha\tools\search\tool.py)
+2026-08-16 22:54:33 - terminal - INFO - [ToolRegistry] 发现工具: webpage (C:\Users\ASUS\Desktop\JohaChat\joha\tools\webpage\tool.py)
+2026-08-16 22:54:33 - terminal - INFO - [ToolRegistry] 自动发现完成，共 2 个工具
+2026-08-16 22:54:33 - terminal - INFO - [消息队列] 已初始化，合并窗口: 120.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-08-16 22:54:50 - terminal - INFO - [消息队列] 已初始化，合并窗口: 1.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-08-16 22:54:50 - terminal - INFO - [消息合并] 群g1 | 合并2条消息 (0.0秒) | 内容: a b
+2026-08-16 22:54:50 - terminal - INFO - [消息队列] 已初始化，合并窗口: 60.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-08-16 22:54:50 - terminal - INFO - [消息合并] 群g1 | 合并3条消息 (0.0秒) | 内容: m0 m1 m2
+2026-08-16 22:54:50 - terminal - INFO - [消息合并] 群g1 | 合并1条消息 (0.0秒) | 内容: m3
+2026-08-16 22:54:50 - terminal - INFO - [消息队列] 已初始化，合并窗口: 60.0秒, 最大队列大小: 5, 最小合并数: 2
+2026-08-16 22:54:50 - terminal - INFO - [消息合并] 群g1 | 合并2条消息 (0.0秒) | 内容: dup
+2026-08-16 22:54:50 - terminal - INFO - [消息队列] 已初始化，合并窗口: 0.1秒, 最大队列大小: 5, 最小合并数: 2
+2026-08-16 22:54:51 - terminal - INFO - [消息合并] 群g1 | 合并2条消息 (0.2秒) | 内容: alone trigger
+2026-08-16 22:54:51 - terminal - INFO - [AI] 请求中... | 用户u_svc_gen | 消息: test
+2026-08-16 22:54:51 - terminal - WARNING - [AI] 未生成回复，已跳过发送到群 | 用户u_svc_gen | 消息: test
+2026-08-16 22:54:51 - terminal - WARNING - [多模态] 模型  不支持图片，已跳过 1 张图片
+2026-08-16 22:54:51 - terminal - INFO - [ToolRegistry] 发现工具: search (C:\Users\ASUS\Desktop\JohaChat\joha\tools\search\tool.py)
+2026-08-16 22:54:51 - terminal - INFO - [ToolRegistry] 发现工具: webpage (C:\Users\ASUS\Desktop\JohaChat\joha\tools\webpage\tool.py)
+2026-08-16 22:54:51 - terminal - INFO - [ToolRegistry] 自动发现完成，共 2 个工具
+2026-08-16 22:54:51 - terminal - INFO - [ToolRegistry] 发现工具: search (C:\Users\ASUS\Desktop\JohaChat\joha\tools\search\tool.py)
+2026-08-16 22:54:51 - terminal - INFO - [ToolRegistry] 发现工具: webpage (C:\Users\ASUS\Desktop\JohaChat\joha\tools\webpage\tool.py)
+2026-08-16 22:54:51 - terminal - INFO - [ToolRegistry] 自动发现完成，共 2 个工具
+2026-08-16 22:54:51 - terminal - INFO - [ToolRegistry] 发现工具: search (C:\Users\ASUS\Desktop\JohaChat\joha\tools\search\tool.py)
+2026-08-16 22:54:51 - terminal - INFO - [ToolRegistry] 发现工具: webpage (C:\Users\ASUS\Desktop\JohaChat\joha\tools\webpage\tool.py)
+2026-08-16 22:54:51 - terminal - INFO - [ToolRegistry] 自动发现完成，共 2 个工具
+2026-08-16 22:54:51 - terminal - INFO - [ToolRegistry] 发现工具: search (C:\Users\ASUS\Desktop\JohaChat\joha\tools\search\tool.py)
+2026-08-16 22:54:51 - terminal - INFO - [ToolRegistry] 发现工具: webpage (C:\Users\ASUS\Desktop\JohaChat\joha\tools\webpage\tool.py)
+2026-08-16 22:54:51 - terminal - INFO - [ToolRegistry] 自动发现完成，共 2 个工具
+2026-08-16 22:55:01 - terminal - INFO - [Generator] 已加载 AI 客户端 | 默认 | 模型: 
+2026-08-16 22:55:01 - terminal - INFO - [Cooldown] 已恢复 1 条冷却记录
+2026-08-16 22:55:01 - terminal - INFO - [ToolRegistry] 发现工具: search (C:\Users\ASUS\Desktop\JohaChat\joha\tools\search\tool.py)
+2026-08-16 22:55:01 - terminal - INFO - [ToolRegistry] 发现工具: webpage (C:\Users\ASUS\Desktop\JohaChat\joha\tools\webpage\tool.py)
+2026-08-16 22:55:01 - terminal - INFO - [ToolRegistry] 自动发现完成，共 2 个工具
+2026-08-16 22:55:01 - terminal - INFO - [消息队列] 已初始化，合并窗口: 120.0秒, 最大队列大小: 5, 最小合并数: 2

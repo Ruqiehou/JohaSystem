@@ -1,0 +1,16 @@
+{
+  "name": "webpage",
+  "description": "Fetch and extract text content from a webpage URL. Useful when the user provides a URL or needs to view specific web content.",
+  "aliases": ["wp", "fetch"],
+  "arguments": {
+    "type": "object",
+    "properties": {
+      "url": {
+        "type": "string",
+        "description": "The URL of the webpage to fetch",
+        "examples": ["https://example.com", "https://baidu.com"]
+      }
+    },
+    "required": ["url"]
+  }
+}
