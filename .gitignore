@@ -35,6 +35,8 @@ ENV/
 # 日志文件
 logs/
 *.log
+*.log.*
+johadata/
 
 # 数据文件（保留目录结构，忽略具体数据；storage/ 位于项目根目录）
 storage/history/*.json
