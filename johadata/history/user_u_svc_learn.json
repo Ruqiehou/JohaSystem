@@ -54,6 +54,11 @@
       "timestamp": "2026-08-19 15:46:07",
       "group_id": "global",
       "message": "hello"
+    },
+    {
+      "timestamp": "2026-09-05 15:45:23",
+      "group_id": "global",
+      "message": "hello"
     }
   ]
 }

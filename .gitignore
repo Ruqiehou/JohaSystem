@@ -39,15 +39,15 @@ logs/
 johadata/
 
 # 数据文件（保留目录结构，忽略具体数据；storage/ 位于项目根目录）
-storage/history/*.json
-storage/styles/*.json
-storage/johalog/*.log
-storage/johalog/*.log.*
-storage/user_profiles.json
-storage/group_modes.json
-storage/group_states.json
-storage/cooldown.json
-!storage/.gitkeep
+johadata/history/*.json
+johadata/styles/*.json
+johadata/johalog/*.log
+johadata/johalog/*.log.*
+johadata/user_profiles.json
+johadata/group_modes.json
+johadata/group_states.json
+johadata/cooldown.json  
+!johadata/.gitkeep
 
 # 配置文件（敏感信息）
 api_config.json
