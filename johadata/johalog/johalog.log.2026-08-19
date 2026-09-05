@@ -1,0 +1,27 @@
+2026-08-19 15:41:03 - johalog - INFO - 已加载 0 个群组模式配置
+2026-08-19 15:41:03 - johalog - INFO - 已加载 0 个用户风格记录
+2026-08-19 15:41:07 - johalog - INFO - ToolRegistry 已加载 2 个工具
+2026-08-19 15:41:07 - johalog - INFO - 已初始化 0 个群组模式
+2026-08-19 15:45:46 - johalog - INFO - 已加载 0 个群组模式配置
+2026-08-19 15:45:46 - johalog - INFO - 已加载 0 个用户风格记录
+2026-08-19 15:45:49 - johalog - INFO - ToolRegistry 已加载 2 个工具
+2026-08-19 15:45:49 - johalog - INFO - 已初始化 0 个群组模式
+2026-08-19 15:46:07 - johalog - INFO - ToolRegistry 已加载 2 个工具
+2026-08-19 15:46:07 - johalog - INFO - 已初始化 0 个群组模式
+2026-08-19 15:46:07 - johalog - INFO - ToolRegistry 已加载 2 个工具
+2026-08-19 15:46:07 - johalog - INFO - 已初始化 0 个群组模式
+2026-08-19 15:46:07 - johalog - WARNING - [回复生成失败] 用户:u_svc_gen, 消息:test..., 已跳过群发送
+2026-08-19 15:46:07 - johalog - INFO - ToolRegistry 已加载 2 个工具
+2026-08-19 15:46:07 - johalog - INFO - 已初始化 0 个群组模式
+2026-08-19 15:46:07 - johalog - INFO - ToolRegistry 已加载 2 个工具
+2026-08-19 15:46:07 - johalog - INFO - 已初始化 0 个群组模式
+2026-08-19 15:46:07 - johalog - INFO - ToolRegistry 已加载 2 个工具
+2026-08-19 15:46:07 - johalog - INFO - 已初始化 0 个群组模式
+2026-08-19 15:46:07 - johalog - INFO - ToolRegistry 已加载 2 个工具
+2026-08-19 15:46:07 - johalog - INFO - 已初始化 0 个群组模式
+2026-08-19 15:46:07 - johalog - WARNING - 模型  不支持多模态，已跳过图片
+2026-08-19 15:46:07 - johalog - INFO - [消息合并] 群:g1, 合并数:2, 时长:0.0s
+2026-08-19 15:46:07 - johalog - INFO - [消息合并] 群:g1, 合并数:3, 时长:0.0s
+2026-08-19 15:46:07 - johalog - INFO - [消息合并] 群:g1, 合并数:1, 时长:0.0s
+2026-08-19 15:46:07 - johalog - INFO - [消息合并] 群:g1, 合并数:2, 时长:0.0s
+2026-08-19 15:46:07 - johalog - INFO - [消息合并] 群:g1, 合并数:2, 时长:0.2s

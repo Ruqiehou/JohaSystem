@@ -40,7 +40,7 @@ from .decision import (
 )
 
 # 版本信息（与 adapter.__version__ 保持一致的统一版本号）
-__version__ = "3.6.0"
+__version__ = "3.7.0"
 __author__ = "Joha Team"
 
 # 导出主要类和函数

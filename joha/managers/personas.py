@@ -294,10 +294,20 @@ class PersonaManager:
                 return f.read().strip()
         return ""
 
+    # 需要 clamp 到 [0, 10] 的数值字段
+    _CLAMPED_FIELDS = frozenset({
+        "extraversion", "agreeableness", "conscientiousness",
+        "neuroticism", "openness", "verbosity", "formality",
+        "emotionality", "humor", "assertiveness", "warmth",
+        "politeness", "curiosity", "empathy", "patience",
+    })
+
     def _traits_with_override(self, override: Dict[str, Any]) -> PersonaTraits:
         traits = PersonaTraits.from_dict(self._default_traits.to_dict())
         for key, value in (override or {}).items():
             if hasattr(traits, key):
+                if key in self._CLAMPED_FIELDS and isinstance(value, (int, float)):
+                    value = max(0, min(10, int(value)))
                 setattr(traits, key, value)
         return traits
 

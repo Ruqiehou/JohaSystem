@@ -209,15 +209,15 @@ def check_llm_config(report: SetupReport) -> None:
     if not cfg:
         return
 
-    chat_llm = cfg.get("chat-llm", {})
-    if not isinstance(chat_llm, dict):
-        report.add_err("chat-llm 配置必须是对象")
+    llm = cfg.get("llm", {})
+    if not isinstance(llm, dict):
+        report.add_err("llm 配置必须是对象")
         return
 
-    providers = chat_llm.get("providers", [])
-    active_name = chat_llm.get("active_provider", "")
+    providers = llm.get("providers", [])
+    active_name = llm.get("active_provider", "")
     if not isinstance(providers, list) or not providers:
-        report.add_err("chat-llm.providers 未配置")
+        report.add_err("llm.providers 未配置")
         return
 
     enabled = [p for p in providers if isinstance(p, dict) and not p.get("disabled", False)]
@@ -243,11 +243,16 @@ def check_llm_config(report: SetupReport) -> None:
 
     report.add_ok(f"可用 LLM Provider：{', '.join(str(name) for name in names if name)}")
 
-    vl_llm = cfg.get("vl-llm", {})
-    if isinstance(vl_llm, dict) and vl_llm.get("api_key") and vl_llm.get("base_url") and vl_llm.get("model"):
-        report.add_ok(f"视觉模型：{vl_llm.get('model')}")
+    # 检查是否有视觉模型 provider（role 含 vision 或 model 名含 vl/vision）
+    vision_providers = [
+        p for p in enabled
+        if p.get("role") in ("vision", "vl")
+        or any(kw in (p.get("model") or "").lower() for kw in ("vl", "vision"))
+    ]
+    if vision_providers:
+        report.add_ok(f"视觉模型：{vision_providers[0].get('model')}")
     else:
-        report.add_warn("视觉模型 vl-llm 未完整配置；图片理解能力可能不可用")
+        report.add_warn("未配置视觉模型 provider；图片理解能力可能不可用（可在 llm.providers 中添加 role='vision' 的 provider）")
 
 
 def print_report(report: SetupReport) -> None:

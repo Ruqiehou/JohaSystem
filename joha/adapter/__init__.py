@@ -27,7 +27,7 @@ from joha.adapter.protocol import (
     RequestEvent,
 )
 
-__version__: str = "3.6.0"
+__version__: str = "3.7.0"
 
 __all__: list[str] = [
     "NapCatClient",
